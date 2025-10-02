@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Wali Kelas - Monitoring Siswa</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1><i class="fas fa-chalkboard-teacher"></i> Dashboard Wali Kelas</h1>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">WK</div>
+                <span id="userName">Wali Kelas</span>
+                <button class="logout-btn" onclick="MonitoringApp.logout()">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </button>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <div class="nav-items">
+                <a href="#dashboard" class="nav-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="#students" class="nav-item" onclick="showSection('students')">
+                    <i class="fas fa-users"></i> Siswa
+                </a>
+                <a href="#attendance" class="nav-item" onclick="showSection('attendance')">
+                    <i class="fas fa-calendar-check"></i> Absensi
+                </a>
+                <a href="#announcements" class="nav-item" onclick="showSection('announcements')">
+                    <i class="fas fa-bullhorn"></i> Pengumuman
+                </a>
+            </div>
+        </nav>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section">
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <h3>Total Siswa</h3>
+                    <div class="stat-value" id="totalStudents">0</div>
+                    <div class="stat-label">siswa di kelas</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>Mata Pelajaran</h3>
+                    <div class="stat-value" id="totalSubjects">0</div>
+                    <div class="stat-label">mata pelajaran</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>Tahun Ajaran</h3>
+                    <div class="stat-value" id="academicYear">-</div>
+                    <div class="stat-label">periode aktif</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>Rata-rata Nilai</h3>
+                    <div class="stat-value" id="averageGrade">0</div>
+                    <div class="stat-label">nilai siswa</div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h2 class="content-title">Ringkasan Kelas</h2>
+                <div class="card-grid">
+                    <div class="info-card">
+                        <div class="card-header">
+                            <div class="card-avatar">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <div class="card-title">Kelas X-A</div>
+                                <div class="card-subtitle">Wali Kelas: Anda</div>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Jumlah Siswa:</strong> <span id="classStudentCount">0</span></p>
+                            <p><strong>Rata-rata Kelas:</strong> <span id="classAverage">0</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Students Section -->
+        <section id="students" class="content-section" style="display: none;">
+            <div class="content-card">
+                <h2 class="content-title">Daftar Siswa Kelas X-A</h2>
+                
+                <div class="search-filter-bar">
+                    <div class="search-box">
+                        <input type="text" class="form-control" placeholder="Cari siswa..." id="searchInput" oninput="filterStudents()">
+                    </div>
+                    <select class="form-control filter-select" id="academicYearFilter" onchange="filterStudents()">
+                        <option value="2024/2025">Tahun Ajaran 2024/2025</option>
+                        <option value="2023/2024">Tahun Ajaran 2023/2024</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table id="studentsTable">
+                        <thead>
+                            <tr>
+                                <th>NISN</th>
+                                <th>Nama Siswa</th>
+                                <th>Orang Tua</th>
+                                <th>Rata-rata Nilai</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Attendance Section -->
+        <section id="attendance" class="content-section" style="display: none;">
+            <div class="content-card">
+                <h2 class="content-title">Absensi Harian</h2>
+                
+                <div class="attendance-header">
+                    <div class="date-selector">
+                        <label class="form-label">Tanggal:</label>
+                        <input type="date" class="form-control" id="attendanceDate" onchange="loadAttendanceForDate()">
+                    </div>
+                    <div class="attendance-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="presentCount">0</span>
+                            <span class="stat-label">Hadir</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="sickCount">0</span>
+                            <span class="stat-label">Sakit</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="permitCount">0</span>
+                            <span class="stat-label">Izin</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="absentCount">0</span>
+                            <span class="stat-label">Alpha</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table id="attendanceTable">
+                        <thead>
+                            <tr>
+                                <th>NISN</th>
+                                <th>Nama Siswa</th>
+                                <th>Status</th>
+                                <th>Waktu</th>
+                                <th>Keterangan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Announcements Section -->
+        <section id="announcements" class="content-section" style="display: none;">
+            <div class="content-card">
+                <h2 class="content-title">Manajemen Pengumuman</h2>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="showAddAnnouncementModal()">
+                        <i class="fas fa-plus"></i> Tambah Pengumuman
+                    </button>
+                </div>
+
+                <div id="announcementsList" class="announcements-list">
+                    <!-- Announcements will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Student Detail Modal -->
+        <div id="studentModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Detail Siswa</h2>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance Modal -->
+        <div id="attendanceModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="attendanceModalTitle">Update Absensi</h2>
+                    <button class="modal-close" onclick="closeAttendanceModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="attendanceForm" onsubmit="saveAttendance(event)">
+                        <input type="hidden" id="attendanceStudentId">
+                        <input type="hidden" id="attendanceCurrentDate">
+                        
+                        <div class="form-group">
+                            <label class="form-label">Siswa:</label>
+                            <input type="text" class="form-control" id="attendanceStudentName" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Status Kehadiran:</label>
+                            <select class="form-control" id="attendanceStatus" required>
+                                <option value="hadir">Hadir</option>
+                                <option value="sakit">Sakit</option>
+                                <option value="izin">Izin</option>
+                                <option value="alpha">Alpha</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" id="attendanceTimeGroup">
+                            <label class="form-label">Waktu Kehadiran:</label>
+                            <input type="time" class="form-control" id="attendanceTime">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Keterangan:</label>
+                            <textarea class="form-control" id="attendanceNote" rows="3" placeholder="Keterangan tambahan (opsional)"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success" style="width: 100%;">
+                                <i class="fas fa-save"></i> Simpan Absensi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcement Modal -->
+        <div id="announcementModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Tambah Pengumuman</h2>
+                    <button class="modal-close" onclick="closeAnnouncementModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="announcementForm" onsubmit="saveAnnouncement(event)">
+                        <div class="form-group">
+                            <label class="form-label">Judul Pengumuman:</label>
+                            <input type="text" class="form-control" id="announcementTitle" placeholder="Masukkan judul pengumuman..." required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Isi Pengumuman:</label>
+                            <textarea class="form-control" id="announcementContent" rows="4" placeholder="Masukkan isi pengumuman..." required></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Prioritas:</label>
+                                <select class="form-control" id="announcementPriority" required>
+                                    <option value="low">Rendah</option>
+                                    <option value="medium" selected>Sedang</option>
+                                    <option value="high">Tinggi</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Target Audience:</label>
+                                <select class="form-control" id="announcementTarget" required>
+                                    <option value="orang-tua">Orang Tua</option>
+                                    <option value="siswa">Siswa</option>
+                                    <option value="both">Orang Tua & Siswa</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success" style="width: 100%;">
+                                <i class="fas fa-save"></i> Simpan Pengumuman
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        let currentStudents = [];
+        
+        // Check authentication
+        if (!MonitoringApp.checkAuth() || MonitoringApp.getCurrentUser().role !== 'wali-kelas') {
+            window.location.href = 'index.html';
+        }
+
+        function initWaliKelas() {
+            const user = MonitoringApp.getCurrentUser();
+            document.getElementById('userName').textContent = user.username;
+            document.getElementById('userAvatar').textContent = MonitoringApp.getInitials(user.username);
+            
+            loadDashboardStats();
+            loadStudents();
+            initAttendance();
+            loadAnnouncements();
+        }
+
+        function loadDashboardStats() {
+            const stats = MonitoringApp.getWaliKelasStats();
+            
+            document.getElementById('totalStudents').textContent = stats.totalStudents;
+            document.getElementById('totalSubjects').textContent = stats.totalSubjects;
+            document.getElementById('academicYear').textContent = stats.academicYear;
+            document.getElementById('averageGrade').textContent = stats.averageGrade;
+            document.getElementById('classStudentCount').textContent = stats.totalStudents;
+            document.getElementById('classAverage').textContent = stats.averageGrade;
+        }
+
+        function loadStudents() {
+            // Filter students for class X-A (wali kelas class)
+            const allStudents = MonitoringApp.dummyData.students;
+            currentStudents = allStudents.filter(student => student.class === 'X-A');
+            displayStudents(currentStudents);
+        }
+
+        function displayStudents(students) {
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+            
+            students.forEach(student => {
+                const academicYear = document.getElementById('academicYearFilter').value;
+                const grades = student.grades[academicYear];
+                const average = grades ? MonitoringApp.calculateAverage(grades) : 0;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.nisn}</td>
+                    <td>${student.name}</td>
+                    <td>${student.parent}</td>
+                    <td>${average}</td>
+                    <td>
+                        <button class="btn btn-info" onclick="viewStudentDetail(${student.id})">
+                            <i class="fas fa-eye"></i> Lihat Detail
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function filterStudents() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = currentStudents.filter(student => 
+                student.name.toLowerCase().includes(searchTerm) ||
+                student.nisn.includes(searchTerm) ||
+                student.parent.toLowerCase().includes(searchTerm)
+            );
+            displayStudents(filtered);
+        }
+
+        function viewStudentDetail(studentId) {
+            const student = MonitoringApp.dummyData.students.find(s => s.id === studentId);
+            if (!student) return;
+            
+            const academicYear = document.getElementById('academicYearFilter').value;
+            const grades = student.grades[academicYear] || {};
+            
+            let gradesHtml = '<div class="grades-container">';
+            const subjects = ['Matematika', 'Bahasa Indonesia', 'IPA', 'IPS'];
+            
+            subjects.forEach(subject => {
+                const subjectGrades = grades[subject] || {};
+                gradesHtml += `
+                    <div class="subject-card">
+                        <h4>${subject}</h4>
+                        <div class="grade-row">
+                            <span>UTS: ${subjectGrades.uts || '-'}</span>
+                            <span>UAS: ${subjectGrades.uas || '-'}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            gradesHtml += '</div>';
+            
+            document.getElementById('modalTitle').textContent = `Detail Siswa - ${student.name}`;
+            document.getElementById('modalBody').innerHTML = `
+                <div class="student-info">
+                    <div class="info-section">
+                        <h3>Informasi Siswa</h3>
+                        <p><strong>NISN:</strong> ${student.nisn}</p>
+                        <p><strong>Nama:</strong> ${student.name}</p>
+                        <p><strong>Kelas:</strong> ${student.class}</p>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3>Informasi Orang Tua</h3>
+                        <p><strong>Nama Orang Tua:</strong> ${student.parent}</p>
+                        <p><strong>No. Telepon:</strong> ${student.parentPhone}</p>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3>Nilai Mata Pelajaran (${academicYear})</h3>
+                        ${gradesHtml}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('studentModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('studentModal').style.display = 'none';
+        }
+
+        // Attendance functions
+        function initAttendance() {
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('attendanceDate').value = today;
+            loadAttendanceForDate();
+        }
+
+        function loadAttendanceForDate() {
+            const selectedDate = document.getElementById('attendanceDate').value;
+            const classStudents = MonitoringApp.dummyData.students.filter(s => s.class === "X-A");
+            const attendanceRecords = MonitoringApp.getAttendanceByDate(selectedDate);
+            
+            displayAttendance(classStudents, attendanceRecords, selectedDate);
+            updateAttendanceStats(attendanceRecords);
+        }
+
+        function displayAttendance(students, attendanceRecords, date) {
+            const tbody = document.getElementById('attendanceTableBody');
+            tbody.innerHTML = '';
+            
+            students.forEach(student => {
+                const attendance = attendanceRecords.find(a => a.studentId === student.id);
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${student.nisn}</td>
+                    <td>${student.name}</td>
+                    <td>
+                        <span class="attendance-badge attendance-${attendance ? attendance.status : 'none'}">
+                            ${attendance ? getAttendanceLabel(attendance.status) : 'Belum diinput'}
+                        </span>
+                    </td>
+                    <td>${attendance ? attendance.time : '-'}</td>
+                    <td>${attendance ? attendance.note : '-'}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editAttendance(${student.id}, '${date}')">
+                            <i class="fas fa-edit"></i> ${attendance ? 'Edit' : 'Input'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateAttendanceStats(attendanceRecords) {
+            const stats = {
+                hadir: 0,
+                sakit: 0,
+                izin: 0,
+                alpha: 0
+            };
+            
+            attendanceRecords.forEach(record => {
+                if (stats.hasOwnProperty(record.status)) {
+                    stats[record.status]++;
+                }
+            });
+            
+            document.getElementById('presentCount').textContent = stats.hadir;
+            document.getElementById('sickCount').textContent = stats.sakit;
+            document.getElementById('permitCount').textContent = stats.izin;
+            document.getElementById('absentCount').textContent = stats.alpha;
+        }
+
+        function editAttendance(studentId, date) {
+            const student = MonitoringApp.dummyData.students.find(s => s.id === studentId);
+            const attendance = MonitoringApp.dummyData.attendance.find(
+                a => a.studentId === studentId && a.date === date
+            );
+            
+            document.getElementById('attendanceStudentId').value = studentId;
+            document.getElementById('attendanceCurrentDate').value = date;
+            document.getElementById('attendanceStudentName').value = student.name;
+            
+            if (attendance) {
+                document.getElementById('attendanceStatus').value = attendance.status;
+                document.getElementById('attendanceTime').value = attendance.time;
+                document.getElementById('attendanceNote').value = attendance.note;
+            } else {
+                document.getElementById('attendanceStatus').value = 'hadir';
+                document.getElementById('attendanceTime').value = '';
+                document.getElementById('attendanceNote').value = '';
+            }
+            
+            toggleTimeInput();
+            document.getElementById('attendanceModal').style.display = 'flex';
+        }
+
+        function toggleTimeInput() {
+            const status = document.getElementById('attendanceStatus').value;
+            const timeGroup = document.getElementById('attendanceTimeGroup');
+            
+            if (status === 'hadir') {
+                timeGroup.style.display = 'block';
+                document.getElementById('attendanceTime').required = true;
+            } else {
+                timeGroup.style.display = 'none';
+                document.getElementById('attendanceTime').required = false;
+                document.getElementById('attendanceTime').value = '';
+            }
+        }
+
+        function saveAttendance(event) {
+            event.preventDefault();
+            
+            const studentId = document.getElementById('attendanceStudentId').value;
+            const date = document.getElementById('attendanceCurrentDate').value;
+            const status = document.getElementById('attendanceStatus').value;
+            const time = document.getElementById('attendanceTime').value;
+            const note = document.getElementById('attendanceNote').value;
+            
+            const attendance = MonitoringApp.addAttendance(studentId, date, status, time, note);
+            
+            if (attendance) {
+                alert('Absensi berhasil disimpan!');
+                closeAttendanceModal();
+                loadAttendanceForDate();
+            } else {
+                alert('Gagal menyimpan absensi!');
+            }
+        }
+
+        // Announcements functions
+        function loadAnnouncements() {
+            const announcements = MonitoringApp.dummyData.announcements
+                .filter(a => a.isActive)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+            displayAnnouncements(announcements);
+        }
+
+        function displayAnnouncements(announcements) {
+            const announcementsList = document.getElementById('announcementsList');
+            announcementsList.innerHTML = '';
+            
+            if (announcements.length === 0) {
+                announcementsList.innerHTML = '<p class="no-data">Belum ada pengumuman</p>';
+                return;
+            }
+            
+            announcements.forEach(announcement => {
+                const announcementCard = document.createElement('div');
+                announcementCard.className = 'announcement-card';
+                announcementCard.innerHTML = `
+                    <div class="announcement-header">
+                        <div class="announcement-info">
+                            <h4>${announcement.title}</h4>
+                            <span class="announcement-priority priority-${announcement.priority}">
+                                ${getPriorityLabel(announcement.priority)}
+                            </span>
+                        </div>
+                        <div class="announcement-date">${MonitoringApp.formatDate(announcement.date)}</div>
+                    </div>
+                    <div class="announcement-content">${announcement.content}</div>
+                    <div class="announcement-footer">
+                        <span class="announcement-target">
+                            Target: ${getTargetAudienceLabel(announcement.targetAudience)}
+                        </span>
+                        <div class="announcement-actions">
+                            <button class="btn btn-warning btn-sm" onclick="editAnnouncement(${announcement.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteAnnouncement(${announcement.id})">
+                                <i class="fas fa-trash"></i> Hapus
+                            </button>
+                        </div>
+                    </div>
+                `;
+                announcementsList.appendChild(announcementCard);
+            });
+        }
+
+        function showAddAnnouncementModal() {
+            // Clear any edit mode
+            delete document.getElementById('announcementModal').dataset.editId;
+            document.getElementById('announcementModal').style.display = 'flex';
+        }
+
+        function closeAnnouncementModal() {
+            document.getElementById('announcementModal').style.display = 'none';
+            document.getElementById('announcementForm').reset();
+        }
+
+        function closeAttendanceModal() {
+            document.getElementById('attendanceModal').style.display = 'none';
+            document.getElementById('attendanceForm').reset();
+        }
+
+        function saveAnnouncement(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('announcementTitle').value;
+            const content = document.getElementById('announcementContent').value;
+            const priority = document.getElementById('announcementPriority').value;
+            const target = document.getElementById('announcementTarget').value;
+            const editId = document.getElementById('announcementModal').dataset.editId;
+            
+            let targetAudience = [];
+            if (target === 'both') {
+                targetAudience = ['orang-tua', 'siswa'];
+            } else {
+                targetAudience = [target];
+            }
+            
+            if (editId) {
+                // Update existing announcement
+                const announcement = MonitoringApp.dummyData.announcements.find(a => a.id == editId);
+                if (announcement) {
+                    announcement.title = title;
+                    announcement.content = content;
+                    announcement.priority = priority;
+                    announcement.targetAudience = targetAudience;
+                    alert('Pengumuman berhasil diupdate!');
+                }
+            } else {
+                // Add new announcement
+                const announcement = MonitoringApp.addAnnouncement(title, content, priority, targetAudience);
+                if (announcement) {
+                    alert('Pengumuman berhasil ditambahkan!');
+                } else {
+                    alert('Gagal menambahkan pengumuman!');
+                    return;
+                }
+            }
+            
+            // Clear edit mode
+            delete document.getElementById('announcementModal').dataset.editId;
+            closeAnnouncementModal();
+            loadAnnouncements();
+        }
+
+        // Edit announcement
+        function editAnnouncement(id) {
+            const announcement = MonitoringApp.dummyData.announcements.find(a => a.id === id);
+            if (!announcement) return;
+            
+            document.getElementById('announcementTitle').value = announcement.title;
+            document.getElementById('announcementContent').value = announcement.content;
+            document.getElementById('announcementPriority').value = announcement.priority;
+            
+            // Determine target
+            if (announcement.targetAudience.includes('orang-tua') && announcement.targetAudience.includes('siswa')) {
+                document.getElementById('announcementTarget').value = 'both';
+            } else if (announcement.targetAudience.includes('orang-tua')) {
+                document.getElementById('announcementTarget').value = 'orang-tua';
+            } else {
+                document.getElementById('announcementTarget').value = 'siswa';
+            }
+            
+            // Store the ID for updating
+            document.getElementById('announcementModal').dataset.editId = id;
+            document.getElementById('announcementModal').style.display = 'flex';
+        }
+
+        // Delete announcement
+        function deleteAnnouncement(id) {
+            if (confirm('Yakin ingin menghapus pengumuman ini?')) {
+                const announcement = MonitoringApp.dummyData.announcements.find(a => a.id === id);
+                if (announcement) {
+                    announcement.isActive = false;
+                    loadAnnouncements();
+                    alert('Pengumuman berhasil dihapus!');
+                }
+            }
+        }
+
+        // Helper functions
+        function getAttendanceLabel(status) {
+            const labels = {
+                'hadir': 'Hadir',
+                'sakit': 'Sakit',
+                'izin': 'Izin',
+                'alpha': 'Alpha'
+            };
+            return labels[status] || status;
+        }
+
+        function getPriorityLabel(priority) {
+            const labels = {
+                'low': 'Rendah',
+                'medium': 'Sedang',
+                'high': 'Tinggi'
+            };
+            return labels[priority] || priority;
+        }
+
+        function getTargetAudienceLabel(targetArray) {
+            if (targetArray.includes('orang-tua') && targetArray.includes('siswa')) {
+                return 'Orang Tua & Siswa';
+            } else if (targetArray.includes('orang-tua')) {
+                return 'Orang Tua';
+            } else if (targetArray.includes('siswa')) {
+                return 'Siswa';
+            }
+            return 'Unknown';
+        }
+
+        // Event listeners
+        document.getElementById('attendanceStatus').addEventListener('change', toggleTimeInput);
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).style.display = 'block';
+            
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', initWaliKelas);
+    </script>
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 0;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid #f0f0f0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .student-info {
+            display: grid;
+            gap: 25px;
+        }
+
+        .info-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .info-section p {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .grades-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .subject-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .subject-card h4 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .grade-row {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 500;
+        }
+
+        .grade-row span {
+            padding: 5px 10px;
+            background: white;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .grades-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Attendance Styles */
+        .attendance-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #007bff;
+        }
+
+        .stat-card.present { border-left-color: #28a745; }
+        .stat-card.sick { border-left-color: #ffc107; }
+        .stat-card.permit { border-left-color: #17a2b8; }
+        .stat-card.absent { border-left-color: #dc3545; }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .count {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .attendance-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .attendance-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .attendance-hadir { background: #d4edda; color: #155724; }
+        .attendance-sakit { background: #fff3cd; color: #856404; }
+        .attendance-izin { background: #d1ecf1; color: #0c5460; }
+        .attendance-alpha { background: #f8d7da; color: #721c24; }
+        .attendance-none { background: #f8f9fa; color: #6c757d; }
+
+        /* Announcements Styles */
+        .announcement-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #007bff;
+        }
+
+        .announcement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .announcement-info h4 {
+            margin: 0 0 0.5rem 0;
+            color: #333;
+        }
+
+        .announcement-priority {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .priority-low { background: #d4edda; color: #155724; }
+        .priority-medium { background: #fff3cd; color: #856404; }
+        .priority-high { background: #f8d7da; color: #721c24; }
+
+        .announcement-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .announcement-content {
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 1rem;
+        }
+
+        .announcement-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .announcement-target {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .announcement-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Time input group visibility */
+        #attendanceTimeGroup {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .attendance-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .attendance-controls {
+                flex-direction: column;
+            }
+            
+            .announcement-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .announcement-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</body>
+</html>

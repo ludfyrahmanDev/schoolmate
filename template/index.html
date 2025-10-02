@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Monitoring Siswa - Login</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <h1 class="login-title">Monitoring Siswa</h1>
+            <p class="login-subtitle">Pilih peran Anda untuk masuk ke sistem</p>
+            
+            <div class="role-buttons">
+                <button class="role-btn wali-kelas" onclick="selectRole('wali-kelas')">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Wali Kelas</span>
+                </button>
+                
+                <button class="role-btn guru" onclick="selectRole('guru')">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>Guru</span>
+                </button>
+                
+                <button class="role-btn kantin" onclick="selectRole('kantin')">
+                    <i class="fas fa-utensils"></i>
+                    <span>Kantin</span>
+                </button>
+                
+                <button class="role-btn orang-tua" onclick="selectRole('orang-tua')">
+                    <i class="fas fa-users"></i>
+                    <span>Orang Tua</span>
+                </button>
+            </div>
+            
+            <div class="demo-link">
+                <a href="demo.html" class="btn btn-info" style="width: 100%; margin-top: 20px;">
+                    <i class="fas fa-info-circle"></i> Lihat Demo & Panduan
+                </a>
+            </div>
+            
+            <div class="login-form" id="loginForm" style="display: none;">
+                <h3 id="roleTitle">Login sebagai</h3>
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label">Username:</label>
+                        <input type="text" class="form-control" id="username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Password:</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            Masuk
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="button" class="btn btn-secondary" onclick="backToRoleSelection()" style="width: 100%; background: #666;">
+                            Kembali
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        let selectedRole = '';
+
+        function selectRole(role) {
+            selectedRole = role;
+            
+            // Hide role buttons and show login form
+            document.querySelector('.role-buttons').style.display = 'none';
+            document.querySelector('.login-subtitle').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            
+            // Update title based on role
+            const roleNames = {
+                'wali-kelas': 'Wali Kelas',
+                'guru': 'Guru',
+                'kantin': 'Kantin',
+                'orang-tua': 'Orang Tua'
+            };
+            
+            document.getElementById('roleTitle').textContent = `Login sebagai ${roleNames[role]}`;
+            
+            // Set default usernames for demo
+            const defaultUsernames = {
+                'wali-kelas': 'wali_kelas',
+                'guru': 'guru',
+                'kantin': 'kantin',
+                'orang-tua': 'orang_tua'
+            };
+            
+            document.getElementById('username').value = defaultUsernames[role] || '';
+            document.getElementById('password').value = 'password123';
+        }
+
+        function backToRoleSelection() {
+            // Show role buttons and hide login form
+            document.querySelector('.role-buttons').style.display = 'grid';
+            document.querySelector('.login-subtitle').style.display = 'block';
+            document.getElementById('loginForm').style.display = 'none';
+            selectedRole = '';
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation (in real app, this would be server-side)
+            if (username && password) {
+                // Show loading state
+                const submitBtn = event.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Memproses...';
+                submitBtn.disabled = true;
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    MonitoringApp.login(selectedRole, username);
+                }, 1000);
+            }
+        }
+
+        // Auto-fill demo credentials on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add demo info
+            const demoInfo = document.createElement('div');
+            demoInfo.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                background: rgba(255, 255, 255, 0.9);
+                padding: 15px;
+                border-radius: 10px;
+                font-size: 0.8rem;
+                max-width: 300px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            `;
+            demoInfo.innerHTML = `
+                <strong>Demo Mode</strong><br>
+                Klik salah satu peran untuk login otomatis dengan kredensial demo.
+            `;
+            document.body.appendChild(demoInfo);
+        });
+    </script>
+</body>
+</html>

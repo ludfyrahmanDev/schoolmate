@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Orang Tua - Monitoring Siswa</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="parent-body">
+    <div class="mobile-container">
+        <!-- Header -->
+        <header class="mobile-header">
+            <div class="header-content">
+                <div class="user-section">
+                    <div class="user-avatar" id="userAvatar">OT</div>
+                    <div class="user-info">
+                        <h2 id="userName">Orang Tua</h2>
+                        <p class="user-subtitle">Monitoring Siswa</p>
+                    </div>
+                </div>
+                <button class="logout-btn mobile-logout" onclick="MonitoringApp.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" onclick="showSection('dashboard')" data-section="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Beranda</span>
+            </button>
+            <button class="nav-btn" onclick="showSection('children')" data-section="children">
+                <i class="fas fa-child"></i>
+                <span>Anak</span>
+            </button>
+            <button class="nav-btn" onclick="showSection('assignments')" data-section="assignments">
+                <i class="fas fa-tasks"></i>
+                <span>Tugas</span>
+            </button>
+            <button class="nav-btn" onclick="showSection('announcements')" data-section="announcements">
+                <i class="fas fa-bullhorn"></i>
+                <span>Info</span>
+            </button>
+            <button class="nav-btn" onclick="showSection('anti-bullying')" data-section="anti-bullying">
+                <i class="fas fa-shield-alt"></i>
+                <span>Lapor</span>
+            </button>
+        </nav>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section mobile-content">
+            <!-- Stats Cards -->
+            <div class="mobile-stats">
+                <div class="stat-card mobile-stat">
+                    <div class="stat-icon">
+                        <i class="fas fa-star" style="color: #ffd700;"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="averageGrade">0</div>
+                        <div class="stat-label">Rata-rata Nilai</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card mobile-stat">
+                    <div class="stat-icon">
+                        <i class="fas fa-wallet" style="color: #ff6b6b;"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalExpense">Rp 0</div>
+                        <div class="stat-label">Pengeluaran</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3 class="section-title">Aksi Cepat</h3>
+                <div class="action-grid">
+                    <button class="action-btn" onclick="showSection('children')">
+                        <i class="fas fa-users"></i>
+                        <span>Lihat Anak</span>
+                    </button>
+                    <button class="action-btn" onclick="showChildGrades()">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Nilai Rapor</span>
+                    </button>
+                    <button class="action-btn" onclick="showTransactionHistory()">
+                        <i class="fas fa-receipt"></i>
+                        <span>Riwayat</span>
+                    </button>
+                    <button class="action-btn" onclick="showBalance()">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Saldo</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="recent-activity">
+                <h3 class="section-title">Aktivitas Terbaru</h3>
+                <div id="recentActivities" class="activity-list">
+                    <!-- Activities will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Children Section -->
+        <section id="children" class="content-section mobile-content" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">Daftar Anak</h2>
+                <p class="section-subtitle">Pantau perkembangan anak Anda</p>
+            </div>
+            
+            <div id="childrenList" class="children-list">
+                <!-- Children cards will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Assignments Section -->
+        <section id="assignments" class="content-section mobile-content" style="display: none;">
+            <div class="section-header">
+                <h2>Nilai Tugas</h2>
+                <p>Lihat nilai tugas dari semua mata pelajaran</p>
+            </div>
+            
+            <div class="filter-section">
+                <select class="form-control" id="assignmentChildSelect" onchange="loadChildAssignments()">
+                    <option value="">Pilih anak...</option>
+                </select>
+            </div>
+            
+            <div id="assignmentsList" class="assignments-list">
+                <p class="no-data">Pilih anak untuk melihat nilai tugas</p>
+            </div>
+        </section>
+
+        <!-- Announcements Section -->
+        <section id="announcements" class="content-section mobile-content" style="display: none;">
+            <div class="section-header">
+                <h2>Pengumuman</h2>
+                <p>Informasi terbaru dari sekolah</p>
+            </div>
+            
+            <div id="announcementsList" class="announcements-list">
+                <!-- Announcements will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Anti-Bullying Section -->
+        <section id="anti-bullying" class="content-section mobile-content" style="display: none;">
+            <div class="section-header">
+                <h2>Lapor Bullying</h2>
+                <p>Laporkan jika terjadi perundungan</p>
+            </div>
+            
+            <div class="bullying-actions">
+                <button class="btn btn-danger btn-full" onclick="showBullyingReportModal()">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Buat Laporan Baru
+                </button>
+            </div>
+            
+            <div class="my-reports">
+                <h3>Laporan Saya</h3>
+                <div id="bullyingReportsList" class="reports-list">
+                    <!-- Reports will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Child Detail Modal -->
+        <div id="childModal" class="mobile-modal" style="display: none;">
+            <div class="modal-overlay" onclick="closeChildModal()"></div>
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h2 id="childModalTitle">Detail Anak</h2>
+                    <button class="modal-close" onclick="closeChildModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-content" id="childModalContent">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Grades Modal -->
+        <div id="gradesModal" class="mobile-modal" style="display: none;">
+            <div class="modal-overlay" onclick="closeGradesModal()"></div>
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h2>Nilai Rapor</h2>
+                    <button class="modal-close" onclick="closeGradesModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-content">
+                    <div class="filter-section">
+                        <label class="form-label">Pilih Anak:</label>
+                        <select class="form-control" id="childSelectGrades" onchange="loadChildGrades()">
+                            <option value="">Pilih anak...</option>
+                        </select>
+                        
+                        <label class="form-label">Periode:</label>
+                        <select class="form-control" id="periodSelectGrades" onchange="loadChildGrades()">
+                            <option value="2024/2025">2024/2025</option>
+                            <option value="2023/2024">2023/2024</option>
+                        </select>
+                    </div>
+                    
+                    <div id="gradesContent" class="grades-content">
+                        <p class="no-data">Pilih anak untuk melihat nilai</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bullying Report Modal -->
+    <div id="bullyingReportModal" class="mobile-modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeBullyingReportModal()"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>Laporan Bullying</h3>
+                <button class="close-btn" onclick="closeBullyingReportModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <form id="bullyingReportForm" onsubmit="saveBullyingReport(event)">
+                    <div class="form-group">
+                        <label class="form-label">Nama Anak:</label>
+                        <select class="form-control" id="bullyingChildSelect" required>
+                            <option value="">Pilih anak...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Kategori:</label>
+                        <select class="form-control" id="bullyingCategory" required>
+                            <option value="">Pilih kategori...</option>
+                            <option value="fisik">Kekerasan Fisik</option>
+                            <option value="verbal">Kekerasan Verbal</option>
+                            <option value="psikologis">Kekerasan Psikologis</option>
+                            <option value="cyber">Cyber Bullying</option>
+                            <option value="sosial">Pengucilan Sosial</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Tanggal Kejadian:</label>
+                        <input type="date" class="form-control" id="bullyingDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Waktu Kejadian:</label>
+                        <input type="time" class="form-control" id="bullyingTime" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Lokasi:</label>
+                        <input type="text" class="form-control" id="bullyingLocation" placeholder="Contoh: Kelas X-A, Kantin, Halaman sekolah" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Saksi:</label>
+                        <input type="text" class="form-control" id="bullyingWitness" placeholder="Nama saksi (jika ada)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Kronologi Kejadian:</label>
+                        <textarea class="form-control" id="bullyingChronology" rows="4" placeholder="Ceritakan kronologi kejadian secara detail..." required></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeBullyingReportModal()">
+                            <i class="fas fa-times"></i> Batal
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-paper-plane"></i> Kirim Laporan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        let currentChildren = [];
+        
+        // Check authentication
+        if (!MonitoringApp.checkAuth() || MonitoringApp.getCurrentUser().role !== 'orang-tua') {
+            window.location.href = 'index.html';
+        }
+
+        function initOrangTua() {
+            const user = MonitoringApp.getCurrentUser();
+            document.getElementById('userName').textContent = user.username;
+            document.getElementById('userAvatar').textContent = MonitoringApp.getInitials(user.username);
+            
+            loadDashboardStats();
+            loadChildren();
+            loadRecentActivities();
+        }
+
+        function loadDashboardStats() {
+            // For demo, assume parent "Budi Santoso"
+            const stats = MonitoringApp.getOrangTuaStats("Budi Santoso");
+            
+            document.getElementById('averageGrade').textContent = stats.averageGrade;
+            document.getElementById('totalExpense').textContent = MonitoringApp.formatCurrency(stats.totalExpense);
+            
+            currentChildren = stats.children;
+        }
+
+        function loadChildren() {
+            const childrenList = document.getElementById('childrenList');
+            const childSelectGrades = document.getElementById('childSelectGrades');
+            
+            childrenList.innerHTML = '';
+            childSelectGrades.innerHTML = '<option value="">Pilih anak...</option>';
+            
+            currentChildren.forEach(child => {
+                // Main children list
+                const childCard = document.createElement('div');
+                childCard.className = 'child-card';
+                childCard.onclick = () => viewChildDetail(child.id);
+                
+                const averageGrade = MonitoringApp.calculateAverage(child.grades[MonitoringApp.dummyData.academicYear] || {});
+                
+                childCard.innerHTML = `
+                    <div class="child-avatar">
+                        ${MonitoringApp.getInitials(child.name)}
+                    </div>
+                    <div class="child-info">
+                        <h3>${child.name}</h3>
+                        <p class="child-class">${child.class}</p>
+                        <p class="child-balance">Saldo: ${MonitoringApp.formatCurrency(child.balance)}</p>
+                    </div>
+                    <div class="child-stats">
+                        <div class="mini-stat">
+                            <span class="mini-stat-value">${averageGrade}</span>
+                            <span class="mini-stat-label">Nilai</span>
+                        </div>
+                        <i class="fas fa-chevron-right child-arrow"></i>
+                    </div>
+                `;
+                
+                childrenList.appendChild(childCard);
+                
+                // Grades modal select
+                const option = document.createElement('option');
+                option.value = child.id;
+                option.textContent = child.name;
+                childSelectGrades.appendChild(option);
+            });
+        }
+
+        function loadRecentActivities() {
+            const activitiesDiv = document.getElementById('recentActivities');
+            const activities = [];
+            
+            // Get recent transactions for children
+            currentChildren.forEach(child => {
+                MonitoringApp.dummyData.transactions
+                    .filter(t => t.studentId === child.id)
+                    .forEach(transaction => {
+                        activities.push({
+                            type: 'transaction',
+                            child: child.name,
+                            description: `Pembelian di kantin`,
+                            amount: transaction.total,
+                            date: transaction.date,
+                            icon: 'fas fa-shopping-cart'
+                        });
+                    });
+            });
+            
+            // Add some dummy activities
+            activities.push({
+                type: 'grade',
+                child: currentChildren[0]?.name || 'Anak',
+                description: 'Nilai UTS Matematika',
+                amount: null,
+                date: '2024-09-20',
+                icon: 'fas fa-graduation-cap'
+            });
+            
+            // Sort by date (newest first)
+            activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            activitiesDiv.innerHTML = '';
+            
+            activities.slice(0, 5).forEach(activity => {
+                const activityDiv = document.createElement('div');
+                activityDiv.className = 'activity-item';
+                activityDiv.innerHTML = `
+                    <div class="activity-icon">
+                        <i class="${activity.icon}"></i>
+                    </div>
+                    <div class="activity-info">
+                        <h4>${activity.description}</h4>
+                        <p>${activity.child} • ${MonitoringApp.formatDate(activity.date)}</p>
+                        ${activity.amount ? `<span class="activity-amount">${MonitoringApp.formatCurrency(activity.amount)}</span>` : ''}
+                    </div>
+                `;
+                activitiesDiv.appendChild(activityDiv);
+            });
+        }
+
+        function viewChildDetail(childId) {
+            const child = currentChildren.find(c => c.id === childId);
+            if (!child) return;
+            
+            const academicYear = MonitoringApp.dummyData.academicYear;
+            const grades = child.grades[academicYear] || {};
+            const averageGrade = MonitoringApp.calculateAverage(grades);
+            
+            // Get transactions for this child
+            const transactions = MonitoringApp.dummyData.transactions.filter(t => t.studentId === child.id);
+            let transactionsHtml = '<p class="no-data">Belum ada transaksi</p>';
+            
+            if (transactions.length > 0) {
+                transactionsHtml = '<div class="transactions-list">';
+                transactions.forEach(transaction => {
+                    transactionsHtml += `
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <h4>Pembelian Kantin</h4>
+                                <p>${MonitoringApp.formatDate(transaction.date)} • ${transaction.paymentMethod === 'cash' ? 'Cash' : 'Kartu'}</p>
+                            </div>
+                            <span class="transaction-amount">${MonitoringApp.formatCurrency(transaction.total)}</span>
+                        </div>
+                    `;
+                });
+                transactionsHtml += '</div>';
+            }
+            
+            // Grades display
+            let gradesHtml = '<div class="grades-grid">';
+            const subjects = ['Matematika', 'Bahasa Indonesia', 'IPA', 'IPS'];
+            
+            subjects.forEach(subject => {
+                const subjectGrades = grades[subject] || {};
+                gradesHtml += `
+                    <div class="grade-card">
+                        <h4>${subject}</h4>
+                        <div class="grade-values">
+                            <span class="grade-item">UTS: ${subjectGrades.uts || '-'}</span>
+                            <span class="grade-item">UAS: ${subjectGrades.uas || '-'}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            gradesHtml += '</div>';
+            
+            document.getElementById('childModalTitle').textContent = child.name;
+            document.getElementById('childModalContent').innerHTML = `
+                <div class="child-detail-header">
+                    <div class="child-avatar large">
+                        ${MonitoringApp.getInitials(child.name)}
+                    </div>
+                    <div class="child-detail-info">
+                        <h2>${child.name}</h2>
+                        <p class="child-class">${child.class}</p>
+                        <p class="child-nisn">NISN: ${child.nisn}</p>
+                    </div>
+                </div>
+                
+                <div class="detail-stats">
+                    <div class="detail-stat">
+                        <span class="stat-value">${MonitoringApp.formatCurrency(child.balance)}</span>
+                        <span class="stat-label">Saldo Kartu</span>
+                    </div>
+                    <div class="detail-stat">
+                        <span class="stat-value">${averageGrade}</span>
+                        <span class="stat-label">Rata-rata Nilai</span>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h3>Nilai Rapor (${academicYear})</h3>
+                    ${gradesHtml}
+                </div>
+                
+                <div class="detail-section">
+                    <h3>Riwayat Transaksi</h3>
+                    ${transactionsHtml}
+                </div>
+            `;
+            
+            document.getElementById('childModal').style.display = 'flex';
+        }
+
+        function showChildGrades() {
+            document.getElementById('gradesModal').style.display = 'flex';
+        }
+
+        function loadChildGrades() {
+            const childId = document.getElementById('childSelectGrades').value;
+            const period = document.getElementById('periodSelectGrades').value;
+            
+            if (!childId) {
+                document.getElementById('gradesContent').innerHTML = '<p class="no-data">Pilih anak untuk melihat nilai</p>';
+                return;
+            }
+            
+            const child = currentChildren.find(c => c.id == childId);
+            const grades = child.grades[period] || {};
+            
+            let html = '<div class="grades-grid">';
+            const subjects = ['Matematika', 'Bahasa Indonesia', 'IPA', 'IPS'];
+            
+            subjects.forEach(subject => {
+                const subjectGrades = grades[subject] || {};
+                html += `
+                    <div class="grade-card">
+                        <h4>${subject}</h4>
+                        <div class="grade-values">
+                            <span class="grade-item ${subjectGrades.uts ? 'has-grade' : ''}">
+                                UTS: ${subjectGrades.uts || '-'}
+                            </span>
+                            <span class="grade-item ${subjectGrades.uas ? 'has-grade' : ''}">
+                                UAS: ${subjectGrades.uas || '-'}
+                            </span>
+                        </div>
+                        <div class="grade-average">
+                            Rata-rata: ${subjectGrades.uts && subjectGrades.uas ? 
+                                Math.round((subjectGrades.uts + subjectGrades.uas) / 2) : '-'
+                            }
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            document.getElementById('gradesContent').innerHTML = html;
+        }
+
+        function showTransactionHistory() {
+            // For now, just show the first child's detail
+            if (currentChildren.length > 0) {
+                viewChildDetail(currentChildren[0].id);
+            }
+        }
+
+        function showBalance() {
+            // For now, just show the children section
+            showSection('children');
+        }
+
+        function closeChildModal() {
+            document.getElementById('childModal').style.display = 'none';
+        }
+
+        function closeGradesModal() {
+            document.getElementById('gradesModal').style.display = 'none';
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).style.display = 'block';
+            
+            // Update active nav button
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+        }
+
+        // Initialize page
+        // Assignment functions
+        function loadChildAssignments() {
+            const childSelect = document.getElementById('assignmentChildSelect');
+            const selectedChildId = childSelect.value;
+            const assignmentsList = document.getElementById('assignmentsList');
+            
+            if (!selectedChildId) {
+                assignmentsList.innerHTML = '<p class="no-data">Pilih anak untuk melihat nilai tugas</p>';
+                return;
+            }
+            
+            const assignments = MonitoringApp.getAssignmentsByStudent(parseInt(selectedChildId));
+            displayAssignments(assignments);
+        }
+
+        function displayAssignments(assignments) {
+            const assignmentsList = document.getElementById('assignmentsList');
+            
+            if (assignments.length === 0) {
+                assignmentsList.innerHTML = '<p class="no-data">Belum ada nilai tugas</p>';
+                return;
+            }
+            
+            // Group by subject
+            const groupedAssignments = assignments.reduce((groups, assignment) => {
+                const subject = assignment.subject;
+                if (!groups[subject]) {
+                    groups[subject] = [];
+                }
+                groups[subject].push(assignment);
+                return groups;
+            }, {});
+            
+            let html = '';
+            Object.keys(groupedAssignments).forEach(subject => {
+                const subjectAssignments = groupedAssignments[subject];
+                const avgScore = subjectAssignments.reduce((sum, a) => sum + (a.score || 0), 0) / subjectAssignments.length;
+                
+                html += `
+                    <div class="subject-assignments">
+                        <div class="subject-header">
+                            <h3>${subject}</h3>
+                            <span class="subject-average">Rata-rata: ${avgScore.toFixed(1)}</span>
+                        </div>
+                        <div class="assignments">
+                `;
+                
+                subjectAssignments.forEach(assignment => {
+                    const scoreColor = assignment.score >= 75 ? 'success' : assignment.score >= 60 ? 'warning' : 'danger';
+                    html += `
+                        <div class="assignment-card">
+                            <div class="assignment-info">
+                                <h4>${assignment.title}</h4>
+                                <p class="assignment-date">Tanggal: ${MonitoringApp.formatDate(assignment.dueDate)}</p>
+                            </div>
+                            <div class="assignment-score score-${scoreColor}">
+                                ${assignment.score || 'Belum dinilai'}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div></div>';
+            });
+            
+            assignmentsList.innerHTML = html;
+        }
+
+        // Announcement functions
+        function loadAnnouncements() {
+            const announcements = MonitoringApp.getAnnouncementsForParent();
+            const announcementsList = document.getElementById('announcementsList');
+            
+            if (announcements.length === 0) {
+                announcementsList.innerHTML = '<p class="no-data">Belum ada pengumuman</p>';
+                return;
+            }
+            
+            let html = '';
+            announcements.forEach(announcement => {
+                const priorityClass = `priority-${announcement.priority}`;
+                html += `
+                    <div class="announcement-card ${priorityClass}">
+                        <div class="announcement-header">
+                            <div class="announcement-priority">${getPriorityLabel(announcement.priority)}</div>
+                            <div class="announcement-date">${MonitoringApp.formatDate(announcement.date)}</div>
+                        </div>
+                        <h3>${announcement.title}</h3>
+                        <p class="announcement-content">${announcement.content}</p>
+                    </div>
+                `;
+            });
+            
+            announcementsList.innerHTML = html;
+        }
+
+        function getPriorityLabel(priority) {
+            const labels = {
+                'low': 'Info',
+                'medium': 'Penting',
+                'high': 'Urgent'
+            };
+            return labels[priority] || priority;
+        }
+
+        // Anti-bullying functions
+        function showBullyingReportModal() {
+            // Populate child select
+            const childSelect = document.getElementById('bullyingChildSelect');
+            childSelect.innerHTML = '<option value="">Pilih anak...</option>';
+            currentChildren.forEach(child => {
+                childSelect.innerHTML += `<option value="${child.id}">${child.name}</option>`;
+            });
+            
+            // Set today's date as default
+            document.getElementById('bullyingDate').value = new Date().toISOString().split('T')[0];
+            
+            document.getElementById('bullyingReportModal').style.display = 'flex';
+        }
+
+        function closeBullyingReportModal() {
+            document.getElementById('bullyingReportModal').style.display = 'none';
+            document.getElementById('bullyingReportForm').reset();
+        }
+
+        function saveBullyingReport(event) {
+            event.preventDefault();
+            
+            const childId = document.getElementById('bullyingChildSelect').value;
+            const category = document.getElementById('bullyingCategory').value;
+            const date = document.getElementById('bullyingDate').value;
+            const time = document.getElementById('bullyingTime').value;
+            const location = document.getElementById('bullyingLocation').value;
+            const witness = document.getElementById('bullyingWitness').value;
+            const chronology = document.getElementById('bullyingChronology').value;
+            
+            const report = MonitoringApp.addBullyingReport(
+                parseInt(childId), category, date, time, location, witness, chronology
+            );
+            
+            if (report) {
+                alert('Laporan berhasil dikirim! Tim sekolah akan menindaklanjuti laporan Anda.');
+                closeBullyingReportModal();
+                loadBullyingReports();
+            } else {
+                alert('Gagal mengirim laporan. Silakan coba lagi.');
+            }
+        }
+
+        function loadBullyingReports() {
+            const reports = MonitoringApp.getBullyingReportsByParent();
+            const reportsList = document.getElementById('bullyingReportsList');
+            
+            if (reports.length === 0) {
+                reportsList.innerHTML = '<p class="no-data">Belum ada laporan</p>';
+                return;
+            }
+            
+            let html = '';
+            reports.forEach(report => {
+                const child = currentChildren.find(c => c.id === report.studentId);
+                const statusClass = `status-${report.status}`;
+                html += `
+                    <div class="report-card ${statusClass}">
+                        <div class="report-header">
+                            <div class="report-info">
+                                <h4>${child ? child.name : 'Unknown'}</h4>
+                                <span class="report-category">${report.category}</span>
+                            </div>
+                            <div class="report-status">${getStatusLabel(report.status)}</div>
+                        </div>
+                        <p class="report-date">${MonitoringApp.formatDate(report.date)} - ${report.time}</p>
+                        <p class="report-location">Lokasi: ${report.location}</p>
+                        <div class="report-chronology">
+                            <strong>Kronologi:</strong>
+                            <p>${report.chronology}</p>
+                        </div>
+                        ${report.response ? `
+                            <div class="report-response">
+                                <strong>Respons Sekolah:</strong>
+                                <p>${report.response}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            reportsList.innerHTML = html;
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                'pending': 'Menunggu',
+                'investigating': 'Dalam Investigasi',
+                'resolved': 'Selesai',
+                'closed': 'Ditutup'
+            };
+            return labels[status] || status;
+        }
+
+        // Initialize functions when sections are shown
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).style.display = 'block';
+            
+            // Update active nav button
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+            
+            // Load data for specific sections
+            switch(sectionName) {
+                case 'assignments':
+                    // Populate child select for assignments
+                    const assignmentChildSelect = document.getElementById('assignmentChildSelect');
+                    assignmentChildSelect.innerHTML = '<option value="">Pilih anak...</option>';
+                    currentChildren.forEach(child => {
+                        assignmentChildSelect.innerHTML += `<option value="${child.id}">${child.name}</option>`;
+                    });
+                    break;
+                case 'announcements':
+                    loadAnnouncements();
+                    break;
+                case 'anti-bullying':
+                    loadBullyingReports();
+                    break;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initOrangTua);
+        
+        // Initialize immediately since DOMContentLoaded might not fire properly
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initOrangTua);
+        } else {
+            initOrangTua();
+        }
+    </script>
+
+    <style>
+        /* Mobile-first design for parent dashboard */
+        .parent-body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .mobile-container {
+            max-width: 414px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: white;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 20px 30px 20px;
+            border-radius: 0 0 25px 25px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .mobile-header .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .user-info h2 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .user-subtitle {
+            margin: 5px 0 0 0;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .mobile-logout {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .mobile-content {
+            padding: 20px;
+            padding-bottom: 100px; /* Account for bottom nav */
+        }
+
+        .mobile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .mobile-stat {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .mobile-stat .stat-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .mobile-stat .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .quick-actions {
+            margin-bottom: 30px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: white;
+            border: none;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .action-btn i {
+            font-size: 1.8rem;
+            color: #667eea;
+        }
+
+        .action-btn span {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .activity-list {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .activity-info p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .activity-amount {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .children-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .child-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .child-card:active {
+            transform: scale(0.98);
+        }
+
+        .child-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .child-avatar.large {
+            width: 80px;
+            height: 80px;
+            font-size: 1.8rem;
+            border-radius: 25px;
+        }
+
+        .child-info {
+            flex: 1;
+        }
+
+        .child-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .child-class {
+            margin: 0 0 3px 0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .child-balance {
+            margin: 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #667eea;
+        }
+
+        .child-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .mini-stat {
+            text-align: center;
+        }
+
+        .mini-stat-value {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .mini-stat-label {
+            display: block;
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .child-arrow {
+            color: #ccc;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 414px;
+            background: white;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            padding: 10px 0;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 10px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.2s ease;
+        }
+
+        .nav-btn.active {
+            color: #667eea;
+        }
+
+        .nav-btn i {
+            font-size: 1.2rem;
+        }
+
+        .nav-btn span {
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .mobile-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-container {
+            background: white;
+            border-radius: 25px 25px 0 0;
+            max-width: 414px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .modal-close {
+            background: #f0f0f0;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-content {
+            padding: 20px;
+        }
+
+        .child-detail-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .child-detail-info h2 {
+            margin: 0 0 5px 0;
+            font-size: 1.4rem;
+            color: #333;
+        }
+
+        .child-nisn {
+            margin: 3px 0 0 0;
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .detail-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .detail-stat {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .detail-stat .stat-value {
+            display: block;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .detail-stat .stat-label {
+            display: block;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .detail-section {
+            margin-bottom: 25px;
+        }
+
+        .detail-section h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .grades-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .grade-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+        }
+
+        .grade-card h4 {
+            margin: 0 0 10px 0;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .grade-values {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 8px;
+        }
+
+        .grade-item {
+            flex: 1;
+            padding: 8px;
+            background: white;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .grade-item.has-grade {
+            color: #667eea;
+        }
+
+        .grade-average {
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .transactions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .transaction-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transaction-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .transaction-info p {
+            margin: 0;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .transaction-amount {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+        }
+
+        .filter-section .form-label {
+            display: block;
+            margin-bottom: 8px;
+            margin-top: 15px;
+            font-weight: 500;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .filter-section .form-label:first-child {
+            margin-top: 0;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 40px 20px;
+        }
+
+        /* Desktop styles */
+        @media (min-width: 769px) {
+            .mobile-container {
+                max-width: 414px;
+                margin: 20px auto;
+                border-radius: 25px;
+                overflow: hidden;
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 374px) {
+            .mobile-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Assignment Styles */
+        .filter-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .subject-assignments {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .subject-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .subject-average {
+            background: #007bff;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .assignment-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .assignment-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .assignment-info h4 {
+            margin: 0 0 0.25rem 0;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .assignment-date {
+            margin: 0;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .assignment-score {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .assignment-score.score-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .assignment-score.score-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .assignment-score.score-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Announcement Styles */
+        .announcement-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #007bff;
+        }
+
+        .announcement-card.priority-high {
+            border-left-color: #dc3545;
+        }
+
+        .announcement-card.priority-medium {
+            border-left-color: #ffc107;
+        }
+
+        .announcement-card.priority-low {
+            border-left-color: #28a745;
+        }
+
+        .announcement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .announcement-priority {
+            background: #007bff;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .announcement-card.priority-high .announcement-priority {
+            background: #dc3545;
+        }
+
+        .announcement-card.priority-medium .announcement-priority {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .announcement-card.priority-low .announcement-priority {
+            background: #28a745;
+        }
+
+        .announcement-date {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .announcement-card h3 {
+            margin: 0.5rem 0;
+            color: #333;
+        }
+
+        .announcement-content {
+            line-height: 1.5;
+            color: #555;
+            margin: 0;
+        }
+
+        /* Anti-Bullying Styles */
+        .bullying-actions {
+            margin-bottom: 2rem;
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .my-reports h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #ffc107;
+        }
+
+        .report-card.status-pending {
+            border-left-color: #ffc107;
+        }
+
+        .report-card.status-investigating {
+            border-left-color: #17a2b8;
+        }
+
+        .report-card.status-resolved {
+            border-left-color: #28a745;
+        }
+
+        .report-card.status-closed {
+            border-left-color: #6c757d;
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .report-info h4 {
+            margin: 0 0 0.25rem 0;
+            color: #333;
+        }
+
+        .report-category {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            text-transform: capitalize;
+        }
+
+        .report-status {
+            background: #ffc107;
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .report-card.status-investigating .report-status {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .report-card.status-resolved .report-status {
+            background: #28a745;
+            color: white;
+        }
+
+        .report-card.status-closed .report-status {
+            background: #6c757d;
+            color: white;
+        }
+
+        .report-date,
+        .report-location {
+            margin: 0.25rem 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .report-chronology,
+        .report-response {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .report-chronology strong,
+        .report-response strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            color: #333;
+        }
+
+        .report-chronology p,
+        .report-response p {
+            margin: 0;
+            line-height: 1.4;
+            color: #555;
+        }
+
+        /* Form Styles for Modal */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .form-actions .btn {
+            flex: 1;
+        }
+
+        /* Bottom nav update for 5 items */
+        .bottom-nav {
+            background: white;
+            display: flex;
+            padding: 0.5rem;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .nav-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 0.25rem;
+            border: none;
+            background: none;
+            color: #666;
+            transition: color 0.3s ease;
+            text-decoration: none;
+            min-width: 0;
+        }
+
+        .nav-btn i {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-btn span {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 374px) {
+            .nav-btn span {
+                font-size: 0.7rem;
+            }
+            
+            .nav-btn i {
+                font-size: 1.1rem;
+            }
+            
+            .nav-btn {
+                padding: 0.4rem 0.1rem;
+            }
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Guru - Monitoring Siswa</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1><i class="fas fa-user-graduate"></i> Dashboard Guru</h1>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">G</div>
+                <span id="userName">Guru</span>
+                <button class="logout-btn" onclick="MonitoringApp.logout()">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </button>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <div class="nav-items">
+                <a href="#dashboard" class="nav-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="#students" class="nav-item" onclick="showSection('students')">
+                    <i class="fas fa-users"></i> Siswa
+                </a>
+                <a href="#assignments" class="nav-item" onclick="showSection('assignments')">
+                    <i class="fas fa-tasks"></i> Tugas
+                </a>
+                <a href="#notes" class="nav-item" onclick="showSection('notes')">
+                    <i class="fas fa-sticky-note"></i> Catatan
+                </a>
+            </div>
+        </nav>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section">
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <h3>Jumlah Kelas</h3>
+                    <div class="stat-value" id="totalClasses">0</div>
+                    <div class="stat-label">kelas diajar</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>Total Siswa</h3>
+                    <div class="stat-value" id="totalStudents">0</div>
+                    <div class="stat-label">siswa diajar</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>Mata Pelajaran</h3>
+                    <div class="stat-value" id="subject">-</div>
+                    <div class="stat-label">yang diajar</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>Tahun Ajaran</h3>
+                    <div class="stat-value" id="academicYear">-</div>
+                    <div class="stat-label">periode aktif</div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h2 class="content-title">Kelas yang Diajar</h2>
+                <div class="card-grid" id="classesGrid">
+                    <!-- Classes will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Students Section -->
+        <section id="students" class="content-section" style="display: none;">
+            <div class="content-card">
+                <h2 class="content-title">Daftar Siswa</h2>
+                
+                <div class="search-filter-bar">
+                    <div class="search-box">
+                        <input type="text" class="form-control" placeholder="Cari siswa..." id="searchInput" oninput="filterStudents()">
+                    </div>
+                    <select class="form-control filter-select" id="classFilter" onchange="filterStudents()">
+                        <option value="">Semua Kelas</option>
+                    </select>
+                    <select class="form-control filter-select" id="academicYearFilter" onchange="filterStudents()">
+                        <option value="2024/2025">Tahun Ajaran 2024/2025</option>
+                        <option value="2023/2024">Tahun Ajaran 2023/2024</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table id="studentsTable">
+                        <thead>
+                            <tr>
+                                <th>NISN</th>
+                                <th>Nama Siswa</th>
+                                <th>Kelas</th>
+                                <th>Nilai <span id="subjectHeader">Matematika</span></th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Assignments Section -->
+        <section id="assignments" class="content-section" style="display: none;">
+            <div class="content-card">
+                <h2 class="content-title">Manajemen Tugas</h2>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="showAddAssignmentModal()">
+                        <i class="fas fa-plus"></i> Tambah Tugas Baru
+                    </button>
+                </div>
+                
+                <div class="search-filter-bar">
+                    <div class="search-box">
+                        <input type="text" class="form-control" placeholder="Cari tugas..." id="searchAssignmentInput" oninput="filterAssignments()">
+                    </div>
+                    <select class="form-control filter-select" id="assignmentClassFilter" onchange="filterAssignments()">
+                        <option value="">Semua Kelas</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table id="assignmentsTable">
+                        <thead>
+                            <tr>
+                                <th>Siswa</th>
+                                <th>Kelas</th>
+                                <th>Judul Tugas</th>
+                                <th>Nilai</th>
+                                <th>Tanggal</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assignmentsTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notes Section -->
+        <section id="notes" class="content-section" style="display: none;">
+            <div class="content-card">
+                <h2 class="content-title">Catatan Siswa</h2>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="showAddNoteModal()">
+                        <i class="fas fa-plus"></i> Tambah Catatan Baru
+                    </button>
+                </div>
+                
+                <div class="search-filter-bar">
+                    <div class="search-box">
+                        <input type="text" class="form-control" placeholder="Cari catatan..." id="searchNoteInput" oninput="filterNotes()">
+                    </div>
+                    <select class="form-control filter-select" id="noteTypeFilter" onchange="filterNotes()">
+                        <option value="">Semua Jenis</option>
+                        <option value="academic">Akademik</option>
+                        <option value="behavior">Perilaku</option>
+                        <option value="achievement">Prestasi</option>
+                    </select>
+                </div>
+
+                <div id="notesList" class="notes-list">
+                    <!-- Notes will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Student Detail Modal -->
+        <div id="studentModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Detail Siswa</h2>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Grade Input Modal -->
+        <div id="gradeModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Input Nilai</h2>
+                    <button class="modal-close" onclick="closeGradeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="gradeForm" onsubmit="saveGrade(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Siswa:</label>
+                                <input type="text" class="form-control" id="gradeStudentName" readonly>
+                                <input type="hidden" id="gradeStudentId">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Mata Pelajaran:</label>
+                                <input type="text" class="form-control" id="gradeSubject" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Tahun Ajaran:</label>
+                                <select class="form-control" id="gradeAcademicYear" required>
+                                    <option value="2024/2025">2024/2025</option>
+                                    <option value="2023/2024">2023/2024</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Jenis Nilai:</label>
+                                <select class="form-control" id="gradeType" required>
+                                    <option value="uts">UTS</option>
+                                    <option value="uas">UAS</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Nilai (0-100):</label>
+                            <input type="number" class="form-control" id="gradeValue" min="0" max="100" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success" style="width: 100%;">
+                                <i class="fas fa-save"></i> Simpan Nilai
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Assignment Modal -->
+        <div id="assignmentModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Tambah Tugas Baru</h2>
+                    <button class="modal-close" onclick="closeAssignmentModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="assignmentForm" onsubmit="saveAssignment(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Pilih Siswa:</label>
+                                <select class="form-control" id="assignmentStudentId" required>
+                                    <option value="">Pilih siswa...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Mata Pelajaran:</label>
+                                <input type="text" class="form-control" id="assignmentSubject" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Judul Tugas:</label>
+                            <input type="text" class="form-control" id="assignmentTitle" placeholder="Masukkan judul tugas..." required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Nilai (0-100):</label>
+                            <input type="number" class="form-control" id="assignmentScore" min="0" max="100" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success" style="width: 100%;">
+                                <i class="fas fa-save"></i> Simpan Tugas
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Note Modal -->
+        <div id="noteModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Tambah Catatan Siswa</h2>
+                    <button class="modal-close" onclick="closeNoteModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="noteForm" onsubmit="saveNote(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Pilih Siswa:</label>
+                                <select class="form-control" id="noteStudentId" required>
+                                    <option value="">Pilih siswa...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Mata Pelajaran:</label>
+                                <input type="text" class="form-control" id="noteSubject" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Jenis Catatan:</label>
+                            <select class="form-control" id="noteType" required>
+                                <option value="academic">Akademik</option>
+                                <option value="behavior">Perilaku</option>
+                                <option value="achievement">Prestasi</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Catatan:</label>
+                            <textarea class="form-control" id="noteContent" rows="4" placeholder="Masukkan catatan untuk siswa..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success" style="width: 100%;">
+                                <i class="fas fa-save"></i> Simpan Catatan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        let currentTeacher = null;
+        let currentStudents = [];
+        
+        // Check authentication
+        if (!MonitoringApp.checkAuth() || MonitoringApp.getCurrentUser().role !== 'guru') {
+            window.location.href = 'index.html';
+        }
+
+        function initGuru() {
+            const user = MonitoringApp.getCurrentUser();
+            document.getElementById('userName').textContent = user.username;
+            document.getElementById('userAvatar').textContent = MonitoringApp.getInitials(user.username);
+            
+            // For demo, assume teacher ID 1 (Matematika)
+            currentTeacher = MonitoringApp.dummyData.teachers.find(t => t.id === 1);
+            
+            loadDashboardStats();
+            loadClassFilters();
+            loadStudents();
+            loadAssignments();
+            loadNotes();
+            populateStudentSelects();
+        }
+
+        function loadDashboardStats() {
+            const stats = MonitoringApp.getGuruStats(currentTeacher.id);
+            
+            document.getElementById('totalClasses').textContent = stats.totalClasses;
+            document.getElementById('totalStudents').textContent = stats.totalStudents;
+            document.getElementById('subject').textContent = stats.subject;
+            document.getElementById('academicYear').textContent = stats.academicYear;
+            document.getElementById('subjectHeader').textContent = stats.subject;
+            
+            // Display classes
+            const classesGrid = document.getElementById('classesGrid');
+            classesGrid.innerHTML = '';
+            
+            currentTeacher.classes.forEach(className => {
+                const classStudents = MonitoringApp.dummyData.students.filter(s => s.class === className);
+                const card = document.createElement('div');
+                card.className = 'info-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-avatar">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div>
+                            <div class="card-title">${className}</div>
+                            <div class="card-subtitle">${currentTeacher.subject}</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Jumlah Siswa:</strong> ${classStudents.length}</p>
+                    </div>
+                `;
+                classesGrid.appendChild(card);
+            });
+        }
+
+        function loadClassFilters() {
+            const classFilter = document.getElementById('classFilter');
+            currentTeacher.classes.forEach(className => {
+                const option = document.createElement('option');
+                option.value = className;
+                option.textContent = className;
+                classFilter.appendChild(option);
+            });
+        }
+
+        function loadStudents() {
+            // Get all students from teacher's classes
+            currentStudents = MonitoringApp.dummyData.students.filter(student => 
+                currentTeacher.classes.includes(student.class)
+            );
+            displayStudents(currentStudents);
+        }
+
+        function displayStudents(students) {
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+            
+            students.forEach(student => {
+                const academicYear = document.getElementById('academicYearFilter').value;
+                const grades = student.grades[academicYear];
+                const subjectGrades = grades && grades[currentTeacher.subject] ? grades[currentTeacher.subject] : {};
+                
+                const utsGrade = subjectGrades.uts || '-';
+                const uasGrade = subjectGrades.uas || '-';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.nisn}</td>
+                    <td>${student.name}</td>
+                    <td>${student.class}</td>
+                    <td>UTS: ${utsGrade} | UAS: ${uasGrade}</td>
+                    <td>
+                        <button class="btn btn-info" onclick="viewStudentDetail(${student.id})" style="margin-right: 5px;">
+                            <i class="fas fa-eye"></i> Detail
+                        </button>
+                        ${(utsGrade === '-' || uasGrade === '-') ? 
+                            `<button class="btn btn-success" onclick="inputGrade(${student.id})">
+                                <i class="fas fa-plus"></i> Input Nilai
+                            </button>` : ''
+                        }
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function filterStudents() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const classFilter = document.getElementById('classFilter').value;
+            
+            let filtered = currentStudents;
+            
+            if (searchTerm) {
+                filtered = filtered.filter(student => 
+                    student.name.toLowerCase().includes(searchTerm) ||
+                    student.nisn.includes(searchTerm)
+                );
+            }
+            
+            if (classFilter) {
+                filtered = filtered.filter(student => student.class === classFilter);
+            }
+            
+            displayStudents(filtered);
+        }
+
+        function viewStudentDetail(studentId) {
+            const student = MonitoringApp.dummyData.students.find(s => s.id === studentId);
+            if (!student) return;
+            
+            const academicYear = document.getElementById('academicYearFilter').value;
+            const grades = student.grades[academicYear] || {};
+            const subjectGrades = grades[currentTeacher.subject] || {};
+            
+            document.getElementById('modalTitle').textContent = `Detail Nilai ${currentTeacher.subject} - ${student.name}`;
+            document.getElementById('modalBody').innerHTML = `
+                <div class="student-info">
+                    <div class="info-section">
+                        <h3>Informasi Siswa</h3>
+                        <p><strong>NISN:</strong> ${student.nisn}</p>
+                        <p><strong>Nama:</strong> ${student.name}</p>
+                        <p><strong>Kelas:</strong> ${student.class}</p>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3>Nilai ${currentTeacher.subject} (${academicYear})</h3>
+                        <div class="grades-container">
+                            <div class="subject-card">
+                                <h4>${currentTeacher.subject}</h4>
+                                <div class="grade-row">
+                                    <span>UTS: ${subjectGrades.uts || 'Belum ada nilai'}</span>
+                                    <span>UAS: ${subjectGrades.uas || 'Belum ada nilai'}</span>
+                                </div>
+                                ${(!subjectGrades.uts || !subjectGrades.uas) ? 
+                                    `<button class="btn btn-success" onclick="closeModal(); inputGrade(${student.id})" style="width: 100%; margin-top: 10px;">
+                                        <i class="fas fa-plus"></i> Input Nilai yang Kosong
+                                    </button>` : ''
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('studentModal').style.display = 'flex';
+        }
+
+        function inputGrade(studentId) {
+            const student = MonitoringApp.dummyData.students.find(s => s.id === studentId);
+            if (!student) return;
+            
+            document.getElementById('gradeStudentId').value = studentId;
+            document.getElementById('gradeStudentName').value = student.name;
+            document.getElementById('gradeSubject').value = currentTeacher.subject;
+            document.getElementById('gradeAcademicYear').value = document.getElementById('academicYearFilter').value;
+            
+            document.getElementById('gradeModal').style.display = 'flex';
+        }
+
+        function saveGrade(event) {
+            event.preventDefault();
+            
+            const studentId = document.getElementById('gradeStudentId').value;
+            const subject = document.getElementById('gradeSubject').value;
+            const academicYear = document.getElementById('gradeAcademicYear').value;
+            const gradeType = document.getElementById('gradeType').value;
+            const gradeValue = document.getElementById('gradeValue').value;
+            
+            // Save grade using the app function
+            const success = MonitoringApp.inputGrade(studentId, subject, gradeType, gradeValue, academicYear);
+            
+            if (success) {
+                alert('Nilai berhasil disimpan!');
+                closeGradeModal();
+                loadStudents(); // Refresh the student list
+            } else {
+                alert('Gagal menyimpan nilai!');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('studentModal').style.display = 'none';
+        }
+
+        function closeGradeModal() {
+            document.getElementById('gradeModal').style.display = 'none';
+            document.getElementById('gradeForm').reset();
+        }
+
+        // Assignment functions
+        function loadAssignments() {
+            const assignments = MonitoringApp.getAssignmentsByTeacher(currentTeacher.id, currentTeacher.subject);
+            displayAssignments(assignments);
+            
+            // Load class filter for assignments
+            const assignmentClassFilter = document.getElementById('assignmentClassFilter');
+            assignmentClassFilter.innerHTML = '<option value="">Semua Kelas</option>';
+            currentTeacher.classes.forEach(className => {
+                const option = document.createElement('option');
+                option.value = className;
+                option.textContent = className;
+                assignmentClassFilter.appendChild(option);
+            });
+        }
+
+        function displayAssignments(assignments) {
+            const tbody = document.getElementById('assignmentsTableBody');
+            tbody.innerHTML = '';
+            
+            assignments.forEach(assignment => {
+                const student = MonitoringApp.dummyData.students.find(s => s.id === assignment.studentId);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student ? student.name : 'Unknown'}</td>
+                    <td>${student ? student.class : '-'}</td>
+                    <td>${assignment.title}</td>
+                    <td><span class="grade-badge grade-${getGradeClass(assignment.score)}">${assignment.score}</span></td>
+                    <td>${MonitoringApp.formatDate(assignment.date)}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editAssignment(${assignment.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteAssignment(${assignment.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function filterAssignments() {
+            const searchTerm = document.getElementById('searchAssignmentInput').value.toLowerCase();
+            const classFilter = document.getElementById('assignmentClassFilter').value;
+            
+            let assignments = MonitoringApp.getAssignmentsByTeacher(currentTeacher.id, currentTeacher.subject);
+            
+            if (searchTerm) {
+                assignments = assignments.filter(assignment => {
+                    const student = MonitoringApp.dummyData.students.find(s => s.id === assignment.studentId);
+                    return assignment.title.toLowerCase().includes(searchTerm) ||
+                           (student && student.name.toLowerCase().includes(searchTerm));
+                });
+            }
+            
+            if (classFilter) {
+                assignments = assignments.filter(assignment => {
+                    const student = MonitoringApp.dummyData.students.find(s => s.id === assignment.studentId);
+                    return student && student.class === classFilter;
+                });
+            }
+            
+            displayAssignments(assignments);
+        }
+
+        // Notes functions
+        function loadNotes() {
+            const allNotes = MonitoringApp.dummyData.studentNotes
+                .filter(note => note.teacherId === currentTeacher.id)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+            displayNotes(allNotes);
+        }
+
+        function displayNotes(notes) {
+            const notesList = document.getElementById('notesList');
+            notesList.innerHTML = '';
+            
+            if (notes.length === 0) {
+                notesList.innerHTML = '<p class="no-data">Belum ada catatan</p>';
+                return;
+            }
+            
+            notes.forEach(note => {
+                const student = MonitoringApp.dummyData.students.find(s => s.id === note.studentId);
+                const noteCard = document.createElement('div');
+                noteCard.className = 'note-card';
+                noteCard.innerHTML = `
+                    <div class="note-header">
+                        <div class="note-info">
+                            <h4>${student ? student.name : 'Unknown'} - ${note.subject}</h4>
+                            <span class="note-type note-type-${note.type}">${getNoteTypeLabel(note.type)}</span>
+                        </div>
+                        <div class="note-date">${MonitoringApp.formatDate(note.date)}</div>
+                    </div>
+                    <div class="note-content">${note.note}</div>
+                    <div class="note-actions">
+                        <button class="btn btn-warning btn-sm" onclick="editNote(${note.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteNote(${note.id})">
+                            <i class="fas fa-trash"></i> Hapus
+                        </button>
+                        ${!note.isRead ? '<span class="note-status">Belum dibaca orang tua</span>' : '<span class="note-status read">Sudah dibaca</span>'}
+                    </div>
+                `;
+                notesList.appendChild(noteCard);
+            });
+        }
+
+        function filterNotes() {
+            const searchTerm = document.getElementById('searchNoteInput').value.toLowerCase();
+            const typeFilter = document.getElementById('noteTypeFilter').value;
+            
+            let notes = MonitoringApp.dummyData.studentNotes
+                .filter(note => note.teacherId === currentTeacher.id);
+            
+            if (searchTerm) {
+                notes = notes.filter(note => {
+                    const student = MonitoringApp.dummyData.students.find(s => s.id === note.studentId);
+                    return note.note.toLowerCase().includes(searchTerm) ||
+                           note.subject.toLowerCase().includes(searchTerm) ||
+                           (student && student.name.toLowerCase().includes(searchTerm));
+                });
+            }
+            
+            if (typeFilter) {
+                notes = notes.filter(note => note.type === typeFilter);
+            }
+            
+            notes.sort((a, b) => new Date(b.date) - new Date(a.date));
+            displayNotes(notes);
+        }
+
+        // Modal functions
+        function showAddAssignmentModal() {
+            document.getElementById('assignmentSubject').value = currentTeacher.subject;
+            document.getElementById('assignmentModal').style.display = 'flex';
+        }
+
+        function closeAssignmentModal() {
+            document.getElementById('assignmentModal').style.display = 'none';
+            document.getElementById('assignmentForm').reset();
+        }
+
+        function showAddNoteModal() {
+            document.getElementById('noteSubject').value = currentTeacher.subject;
+            document.getElementById('noteModal').style.display = 'flex';
+        }
+
+        function closeNoteModal() {
+            document.getElementById('noteModal').style.display = 'none';
+            document.getElementById('noteForm').reset();
+        }
+
+        function saveAssignment(event) {
+            event.preventDefault();
+            
+            const studentId = document.getElementById('assignmentStudentId').value;
+            const title = document.getElementById('assignmentTitle').value;
+            const score = document.getElementById('assignmentScore').value;
+            
+            const assignment = MonitoringApp.addAssignment(
+                studentId, 
+                currentTeacher.subject, 
+                title, 
+                score, 
+                currentTeacher.id
+            );
+            
+            if (assignment) {
+                alert('Tugas berhasil ditambahkan!');
+                closeAssignmentModal();
+                loadAssignments();
+            } else {
+                alert('Gagal menambahkan tugas!');
+            }
+        }
+
+        function saveNote(event) {
+            event.preventDefault();
+            
+            const studentId = document.getElementById('noteStudentId').value;
+            const type = document.getElementById('noteType').value;
+            const content = document.getElementById('noteContent').value;
+            
+            const note = MonitoringApp.addStudentNote(
+                studentId, 
+                currentTeacher.id, 
+                currentTeacher.subject, 
+                content, 
+                type
+            );
+            
+            if (note) {
+                alert('Catatan berhasil ditambahkan!');
+                closeNoteModal();
+                loadNotes();
+            } else {
+                alert('Gagal menambahkan catatan!');
+            }
+        }
+
+        function populateStudentSelects() {
+            const assignmentSelect = document.getElementById('assignmentStudentId');
+            const noteSelect = document.getElementById('noteStudentId');
+            
+            // Clear existing options
+            assignmentSelect.innerHTML = '<option value="">Pilih siswa...</option>';
+            noteSelect.innerHTML = '<option value="">Pilih siswa...</option>';
+            
+            // Add students from teacher's classes
+            MonitoringApp.dummyData.students
+                .filter(student => currentTeacher.classes.includes(student.class))
+                .forEach(student => {
+                    const option1 = document.createElement('option');
+                    option1.value = student.id;
+                    option1.textContent = `${student.name} (${student.class})`;
+                    assignmentSelect.appendChild(option1);
+                    
+                    const option2 = document.createElement('option');
+                    option2.value = student.id;
+                    option2.textContent = `${student.name} (${student.class})`;
+                    noteSelect.appendChild(option2);
+                });
+        }
+
+        // Helper functions
+        function getGradeClass(score) {
+            if (score >= 90) return 'excellent';
+            if (score >= 80) return 'good';
+            if (score >= 70) return 'average';
+            return 'poor';
+        }
+
+        function getNoteTypeLabel(type) {
+            const labels = {
+                'academic': 'Akademik',
+                'behavior': 'Perilaku', 
+                'achievement': 'Prestasi'
+            };
+            return labels[type] || type;
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).style.display = 'block';
+            
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', initGuru);
+    </script>
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 0;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid #f0f0f0;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .student-info {
+            display: grid;
+            gap: 25px;
+        }
+
+        .info-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .info-section p {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .grades-container {
+            display: grid;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .subject-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #43e97b;
+        }
+
+        .subject-card h4 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .grade-row {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .grade-row span {
+            padding: 5px 10px;
+            background: white;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .action-buttons {
+            margin-bottom: 20px;
+        }
+
+        .grade-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .grade-excellent { background: #43e97b; }
+        .grade-good { background: #4facfe; }
+        .grade-average { background: #feca57; }
+        .grade-poor { background: #ff6b6b; }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            margin: 0 2px;
+        }
+
+        .notes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .note-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #43e97b;
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .note-info h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .note-type {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .note-type-academic { background: #4facfe; }
+        .note-type-behavior { background: #feca57; }
+        .note-type-achievement { background: #43e97b; }
+
+        .note-date {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .note-content {
+            margin: 15px 0;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .note-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .note-status {
+            font-size: 0.8rem;
+            color: #666;
+            padding: 4px 8px;
+            background: #e9ecef;
+            border-radius: 12px;
+        }
+
+        .note-status.read {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .note-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .note-actions {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</body>
+</html>
