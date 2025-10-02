@@ -39,6 +39,10 @@
                 <i class="fas fa-tasks"></i>
                 <span>Tugas</span>
             </button>
+            <button class="nav-btn" onclick="showSection('notes')" data-section="notes">
+                <i class="fas fa-sticky-note"></i>
+                <span>Catatan</span>
+            </button>
             <button class="nav-btn" onclick="showSection('announcements')" data-section="announcements">
                 <i class="fas fa-bullhorn"></i>
                 <span>Info</span>
@@ -145,6 +149,33 @@
             
             <div id="announcementsList" class="announcements-list">
                 <!-- Announcements will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Notes Section -->
+        <section id="notes" class="content-section mobile-content" style="display: none;">
+            <div class="section-header">
+                <h2>Catatan dari Guru</h2>
+                <p>Catatan dan komunikasi dari guru mengenai anak Anda</p>
+            </div>
+            
+            <div class="filter-section">
+                <select class="form-control" id="notesChildSelect" onchange="loadChildNotes()">
+                    <option value="">Pilih anak...</option>
+                </select>
+                
+                <div class="notes-filter">
+                    <button class="filter-btn active" onclick="filterNotes('all')" data-filter="all">
+                        Semua <span id="allNotesCount" class="count-badge">0</span>
+                    </button>
+                    <button class="filter-btn" onclick="filterNotes('unread')" data-filter="unread">
+                        Belum Dibaca <span id="unreadNotesCount" class="count-badge">0</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="notesList" class="notes-list">
+                <p class="no-data">Pilih anak untuk melihat catatan</p>
             </div>
         </section>
 
@@ -682,6 +713,154 @@
             return labels[priority] || priority;
         }
 
+        // Notes functions
+        function loadChildNotes() {
+            const childSelect = document.getElementById('notesChildSelect');
+            const selectedChildId = childSelect.value;
+            const notesList = document.getElementById('notesList');
+            
+            if (!selectedChildId) {
+                notesList.innerHTML = '<p class="no-data">Pilih anak untuk melihat catatan</p>';
+                updateNotesCount(0, 0);
+                return;
+            }
+            
+            const notes = MonitoringApp.getStudentNotes(parseInt(selectedChildId));
+            displayNotes(notes);
+            updateNotesCount(notes.length, notes.filter(n => !n.isRead).length);
+        }
+
+        function displayNotes(notes, filter = 'all') {
+            const notesList = document.getElementById('notesList');
+            
+            let filteredNotes = notes;
+            if (filter === 'unread') {
+                filteredNotes = notes.filter(n => !n.isRead);
+            }
+            
+            if (filteredNotes.length === 0) {
+                const message = filter === 'unread' ? 'Semua catatan sudah dibaca' : 'Belum ada catatan dari guru';
+                notesList.innerHTML = `<p class="no-data">${message}</p>`;
+                return;
+            }
+            
+            // Sort by date (newest first)
+            filteredNotes.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            let html = '';
+            filteredNotes.forEach(note => {
+                const teacher = MonitoringApp.dummyData.teachers.find(t => t.id === note.teacherId);
+                const readClass = note.isRead ? 'read' : 'unread';
+                const priorityClass = note.priority ? `priority-${note.priority}` : '';
+                
+                html += `
+                    <div class="note-card ${readClass} ${priorityClass}" onclick="markNoteAsRead(${note.id})">
+                        <div class="note-header">
+                            <div class="note-teacher">
+                                <i class="fas fa-user-tie"></i>
+                                <span>${teacher ? teacher.name : 'Guru'}</span>
+                                ${note.subject ? `<span class="note-subject">${note.subject}</span>` : ''}
+                            </div>
+                            <div class="note-date">${MonitoringApp.formatDate(note.date)}</div>
+                        </div>
+                        
+                        ${note.category ? `
+                            <div class="note-category">
+                                <i class="fas fa-tag"></i>
+                                ${getCategoryLabel(note.category)}
+                            </div>
+                        ` : ''}
+                        
+                        <div class="note-content">${note.content}</div>
+                        
+                        ${!note.isRead ? '<div class="unread-indicator"><i class="fas fa-circle"></i></div>' : ''}
+                        
+                        ${note.isRead ? `
+                            <div class="note-read-time">
+                                Dibaca: ${MonitoringApp.formatDate(note.readAt)}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            notesList.innerHTML = html;
+        }
+
+        function filterNotes(filterType) {
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-filter="${filterType}"]`).classList.add('active');
+            
+            // Get current notes and apply filter
+            const childSelect = document.getElementById('notesChildSelect');
+            const selectedChildId = childSelect.value;
+            
+            if (selectedChildId) {
+                const notes = MonitoringApp.getStudentNotes(parseInt(selectedChildId));
+                displayNotes(notes, filterType);
+            }
+        }
+
+        function markNoteAsRead(noteId) {
+            const note = MonitoringApp.dummyData.studentNotes.find(n => n.id === noteId);
+            if (note && !note.isRead) {
+                MonitoringApp.markNoteAsRead(noteId);
+                
+                // Reload notes to reflect changes
+                loadChildNotes();
+                
+                // Show feedback
+                showNotification('Catatan ditandai sebagai sudah dibaca');
+            }
+        }
+
+        function updateNotesCount(total, unread) {
+            document.getElementById('allNotesCount').textContent = total;
+            document.getElementById('unreadNotesCount').textContent = unread;
+        }
+
+        function getCategoryLabel(category) {
+            const labels = {
+                'akademik': 'Akademik',
+                'perilaku': 'Perilaku', 
+                'kesehatan': 'Kesehatan',
+                'prestasi': 'Prestasi',
+                'kedisiplinan': 'Kedisiplinan',
+                'lainnya': 'Lainnya'
+            };
+            return labels[category] || category;
+        }
+
+        function showNotification(message) {
+            // Simple notification - you can enhance this with a proper toast system
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #28a745;
+                color: white;
+                padding: 1rem;
+                border-radius: 5px;
+                z-index: 9999;
+                transition: opacity 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
         // Anti-bullying functions
         function showBullyingReportModal() {
             // Populate child select
@@ -801,6 +980,14 @@
                     assignmentChildSelect.innerHTML = '<option value="">Pilih anak...</option>';
                     currentChildren.forEach(child => {
                         assignmentChildSelect.innerHTML += `<option value="${child.id}">${child.name}</option>`;
+                    });
+                    break;
+                case 'notes':
+                    // Populate child select for notes
+                    const notesChildSelect = document.getElementById('notesChildSelect');
+                    notesChildSelect.innerHTML = '<option value="">Pilih anak...</option>';
+                    currentChildren.forEach(child => {
+                        notesChildSelect.innerHTML += `<option value="${child.id}">${child.name}</option>`;
                     });
                     break;
                 case 'announcements':
@@ -1585,6 +1772,246 @@
             line-height: 1.5;
             color: #555;
             margin: 0;
+        }
+
+        /* Notes Styles */
+        .notes-filter {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .filter-btn {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .filter-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .count-badge {
+            background: rgba(255,255,255,0.3);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .filter-btn.active .count-badge {
+            background: rgba(255,255,255,0.3);
+            color: white;
+        }
+
+        .filter-btn:not(.active) .count-badge {
+            background: #007bff;
+            color: white;
+        }
+
+        .note-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #007bff;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+        }
+
+        .note-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .note-card.unread {
+            border-left-color: #ffc107;
+            background: linear-gradient(135deg, #fff9e6 0%, white 100%);
+        }
+
+        .note-card.priority-high {
+            border-left-color: #dc3545;
+        }
+
+        .note-card.priority-medium {
+            border-left-color: #ffc107;
+        }
+
+        .note-card.priority-low {
+            border-left-color: #28a745;
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .note-teacher {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .note-teacher i {
+            color: #007bff;
+        }
+
+        .note-subject {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        .note-date {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .note-category {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-bottom: 0.75rem;
+            color: #007bff;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .note-category i {
+            font-size: 0.75rem;
+        }
+
+        .note-content {
+            line-height: 1.5;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+
+        .unread-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: #ffc107;
+            font-size: 0.6rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .note-read-time {
+            color: #666;
+            font-size: 0.8rem;
+            font-style: italic;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 1rem;
+            border-radius: 5px;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Bottom nav update for 6 items */
+        .bottom-nav {
+            /* position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0; */
+            background: white;
+            display: flex;
+            padding: 0.5rem;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .nav-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.4rem 0.2rem;
+            border: none;
+            background: none;
+            color: #666;
+            transition: color 0.3s ease;
+            text-decoration: none;
+            min-width: 0;
+        }
+
+        .nav-btn i {
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .nav-btn span {
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 374px) {
+            .nav-btn span {
+                font-size: 0.65rem;
+            }
+            
+            .nav-btn i {
+                font-size: 1rem;
+            }
+            
+            .nav-btn {
+                padding: 0.3rem 0.1rem;
+            }
+            
+            .notes-filter {
+                flex-direction: column;
+            }
+            
+            .filter-btn {
+                font-size: 0.8rem;
+            }
+            
+            .note-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+            
+            .note-teacher {
+                flex-wrap: wrap;
+            }
         }
 
         /* Anti-Bullying Styles */

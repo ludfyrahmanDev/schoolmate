@@ -34,6 +34,18 @@ Sistem monitoring siswa adalah aplikasi web responsif yang memungkinkan 4 jenis 
 - **Dashboard**: Rata-rata nilai dan pengeluaran anak
 - **Multi-Anak**: Support untuk memantau beberapa anak
 - **Detail Anak**: Informasi lengkap (nama, kelas, saldo, nilai rapor)
+- **Nilai Tugas**: Lihat nilai tugas dari semua mata pelajaran dengan rata-rata per mapel
+- **Catatan dari Guru**: 
+  - Tampilan catatan dan komunikasi dari guru
+  - Filter berdasarkan status (semua/belum dibaca)
+  - Kategori catatan (akademik, perilaku, prestasi, kesehatan, kedisiplinan)
+  - Indikator prioritas dan status baca
+  - Notifikasi real-time untuk catatan baru
+- **Pengumuman**: Informasi terbaru dari wali kelas dengan prioritas
+- **Laporan Anti-Bullying**: 
+  - Form laporan lengkap (kategori, tanggal, waktu, lokasi, saksi, kronologi)
+  - Tracking status laporan (menunggu, investigasi, selesai)
+  - Respons dari pihak sekolah
 - **Filter Periode**: Nilai rapor dapat difilter berdasarkan periode
 - **Design Mobile-First**: Interface mirip aplikasi iOS/Android
 

@@ -135,20 +135,60 @@ const dummyData = {
             studentId: 1,
             teacherId: 1,
             subject: "Matematika",
-            note: "Siswa sangat aktif dalam diskusi kelas. Perlu lebih fokus dalam mengerjakan soal cerita.",
-            date: "2024-09-20",
-            type: "academic", // academic, behavior, achievement
-            isRead: false
+            content: "Siswa sangat aktif dalam diskusi kelas dan menunjukkan pemahaman yang baik. Namun perlu lebih fokus dalam mengerjakan soal cerita dan meningkatkan ketelitian dalam perhitungan.",
+            date: "2024-10-01",
+            category: "akademik",
+            priority: "medium",
+            isRead: false,
+            readAt: null
         },
         {
             id: 2,
-            studentId: 2,
+            studentId: 1,
             teacherId: 2,
             subject: "Bahasa Indonesia",
-            note: "Prestasi menulis yang sangat baik. Direkomendasikan untuk mengikuti lomba puisi.",
-            date: "2024-09-21",
-            type: "achievement",
-            isRead: true
+            content: "Prestasi menulis yang sangat baik! Karya puisinya menunjukkan kreativitas tinggi. Direkomendasikan untuk mengikuti lomba puisi tingkat kabupaten.",
+            date: "2024-09-28",
+            category: "prestasi",
+            priority: "high",
+            isRead: true,
+            readAt: "2024-10-02"
+        },
+        {
+            id: 3,
+            studentId: 1,
+            teacherId: 3,
+            subject: "IPA",
+            content: "Sikap dan perilaku di kelas sangat baik. Siswa membantu teman yang kesulitan dan menunjukkan leadership yang positif dalam kerja kelompok.",
+            date: "2024-09-25",
+            category: "perilaku",
+            priority: "low",
+            isRead: false,
+            readAt: null
+        },
+        {
+            id: 4,
+            studentId: 2,
+            teacherId: 1,
+            subject: "Matematika",
+            content: "Perlu perhatian khusus dalam materi aljabar. Disarankan untuk mengikuti bimbingan tambahan atau les private untuk mengejar ketertinggalan.",
+            date: "2024-09-30",
+            category: "akademik",
+            priority: "high",
+            isRead: false,
+            readAt: null
+        },
+        {
+            id: 5,
+            studentId: 3,
+            teacherId: 4,
+            subject: "Olahraga",
+            content: "Siswa mengeluh sakit kepala berulang saat aktivitas fisik. Mohon konsultasi dengan dokter untuk pemeriksaan kesehatan yang lebih detail.",
+            date: "2024-09-27",
+            category: "kesehatan", 
+            priority: "high",
+            isRead: true,
+            readAt: "2024-09-28"
         }
     ],
     
