@@ -10,10 +10,14 @@
 <body>
     <div class="login-container">
         <div class="login-card">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4ZXa3vVwFAkuOeJRKQMEpmZwbg1nVMUdulg&s" height="80" alt="">
+                <img src="https://i.pinimg.com/236x/67/e9/b1/67e9b15075e83cfa3235b1f76b7cb890.jpg" height="80" alt="">
+            </div>
             <h1 class="login-title">Monitoring Siswa</h1>
-            <p class="login-subtitle">Pilih peran Anda untuk masuk ke sistem</p>
+            <p class="login-subtitle" style="display: none;">Pilih peran Anda untuk masuk ke sistem</p>
             
-            <div class="role-buttons">
+            <div class="role-buttons" style="display: none;">
                 <button class="role-btn wali-kelas" onclick="selectRole('wali-kelas')">
                     <i class="fas fa-chalkboard-teacher"></i>
                     <span>Wali Kelas</span>
@@ -41,8 +45,8 @@
                 </a>
             </div>
             
-            <div class="login-form" id="loginForm" style="display: none;">
-                <h3 id="roleTitle">Login sebagai</h3>
+            <div class="login-form" id="loginForm" style="display: block;">
+                <!-- <h3 id="roleTitle">Login sebagai</h3> -->
                 <form onsubmit="handleLogin(event)">
                     <div class="form-group">
                         <label class="form-label">Username:</label>
@@ -51,7 +55,7 @@
                     
                     <div class="form-group">
                         <label class="form-label">Password:</label>
-                        <input type="password" class="form-control" id="password" required>
+                        <input type="password" class="form-control" id="password" value="password123" required>
                     </div>
                     
                     <div class="form-group">
@@ -59,8 +63,8 @@
                             Masuk
                         </button>
                     </div>
-                    
-                    <div class="form-group">
+                    <img src="https://marketplace.canva.com/EAGWVaYSBbU/1/0/800w/canva-putih-biru-kuning-modern-geometri-penerimaan-siswa-baru-banner-c71_WYLVjD0.jpg" alt="" width="100%">
+                    <div class="form-group" style="display: none;">
                         <button type="button" class="btn btn-secondary" onclick="backToRoleSelection()" style="width: 100%; background: #666;">
                             Kembali
                         </button>
@@ -117,7 +121,9 @@
             
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            
+            selectedRole = username.split('_')
+            // make one string
+            selectedRole = selectedRole.join('-')
             // Simple validation (in real app, this would be server-side)
             if (username && password) {
                 // Show loading state

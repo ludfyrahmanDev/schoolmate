@@ -126,7 +126,7 @@
         <!-- Attendance Section -->
         <section id="attendance" class="content-section" style="display: none;">
             <div class="content-card">
-                <h2 class="content-title">Absensi Harian</h2>
+                <h2 class="content-title">Absensi Harian X A</h2>
                 
                 <div class="attendance-header">
                     <div class="date-selector">
@@ -159,10 +159,10 @@
                             <tr>
                                 <th>NISN</th>
                                 <th>Nama Siswa</th>
-                                <th>Status</th>
-                                <th>Waktu</th>
-                                <th>Keterangan</th>
-                                <th>Aksi</th>
+                                <th>S</th>
+                                <th>I</th>
+                                <th>A</th>
+                                <!-- <th>Aksi</th> -->
                             </tr>
                         </thead>
                         <tbody id="attendanceTableBody">
@@ -170,6 +170,9 @@
                         </tbody>
                     </table>
                 </div>
+               <button class="btn btn-primary btn-sm" style="margin-top: 20px;">
+                <i class="fas fa-edit"></i> Simpan
+                </button>
             </div>
         </section>
 
@@ -450,23 +453,29 @@
             students.forEach(student => {
                 const attendance = attendanceRecords.find(a => a.studentId === student.id);
                 const row = document.createElement('tr');
-                
+                    // <td>
+                    //     <span class="attendance-badge attendance-${attendance ? attendance.status : 'none'}">
+                    //         ${attendance ? getAttendanceLabel(attendance.status) : 'Belum diinput'}
+                    //     </span>
+                    // </td>
                 row.innerHTML = `
                     <td>${student.nisn}</td>
                     <td>${student.name}</td>
                     <td>
-                        <span class="attendance-badge attendance-${attendance ? attendance.status : 'none'}">
-                            ${attendance ? getAttendanceLabel(attendance.status) : 'Belum diinput'}
-                        </span>
+                        <input type='radio' name='presensi_${student.nisn}'/>
                     </td>
-                    <td>${attendance ? attendance.time : '-'}</td>
-                    <td>${attendance ? attendance.note : '-'}</td>
                     <td>
-                        <button class="btn btn-primary btn-sm" onclick="editAttendance(${student.id}, '${date}')">
-                            <i class="fas fa-edit"></i> ${attendance ? 'Edit' : 'Input'}
-                        </button>
+                        <input type='radio' name='presensi_${student.nisn}'/>
+                    </td>
+                    <td>
+                        <input type='radio' name='presensi_${student.nisn}'/>
                     </td>
                 `;
+                // <td>
+                //         <button class="btn btn-primary btn-sm" onclick="editAttendance(${student.id}, '${date}')">
+                //             <i class="fas fa-edit"></i> ${attendance ? 'Edit' : 'Input'}
+                //         </button>
+                //     </td>
                 tbody.appendChild(row);
             });
         }

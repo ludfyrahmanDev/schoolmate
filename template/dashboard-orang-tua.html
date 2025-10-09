@@ -51,6 +51,10 @@
                 <i class="fas fa-shield-alt"></i>
                 <span>Lapor</span>
             </button>
+            <button class="nav-btn" onclick="showSection('feedback')" data-section="feedback">
+                <i class="fas fa-comment"></i>
+                <span>Feedback</span>
+            </button>
         </nav>
 
         <!-- Dashboard Section -->
@@ -200,6 +204,26 @@
                 </div>
             </div>
         </section>
+        <section id="feedback" class="content-section mobile-content" style="display: none;">
+            <div class="section-header">
+                <h2>Masukan dari wali siswa</h2>
+                <p>Berikan kritik dan saran untuk sekolah</p>
+            </div>
+            
+            <div class="feedback-actions">
+                <button class="btn btn-danger btn-full" onclick="showFeedbackReportModal()">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Buat Feedback Baru
+                </button>
+            </div>
+            
+            <div class="my-reports">
+                <h3>Feedback Saya</h3>
+                <div id="feedbackReportsList" class="reports-list">
+                    <!-- Reports will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
 
         <!-- Child Detail Modal -->
         <div id="childModal" class="mobile-modal" style="display: none;">
@@ -317,7 +341,56 @@
             </div>
         </div>
     </div>
-
+    <div id="feedbackReportModal" class="mobile-modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeFeedbackReportModal()"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>Laporan Feedback</h3>
+                <button class="close-btn" onclick="closeFeedbackReportModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <form id="bullyingReportForm" >
+                    <div class="form-group">
+                        <label class="form-label">Nama Anak:</label>
+                        <select class="form-control" id="feedbackChildSelect" required>
+                            <option value="">Pilih anak...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Kategori:</label>
+                        <select class="form-control" id="feedbackCategory" required>
+                            <option value="">Pilih kategori...</option>
+                            <option value="fisik">Pengajaran</option>
+                            <option value="verbal">Tata kelola</option>
+                            <option value="psikologis">Hubungan Masyarakat</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Yang bersangkutan</label>
+                        <input type="text" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Kritik/Saran:</label>
+                        <textarea class="form-control" id="feedbackChronology" rows="4" placeholder="kritik/saran" required></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeBullyingReportModal()">
+                            <i class="fas fa-times"></i> Batal
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-paper-plane"></i> Kirim Laporan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <script src="assets/js/app.js"></script>
     <script>
         let currentChildren = [];
@@ -641,37 +714,46 @@
                 return groups;
             }, {});
             
-            let html = '';
+            // let html = '';
+            let html = '<table>'+
+                    '<tr><td>Mata Pelajaran</td><td>T1</td><td>T2</td><td>T3</td></tr>';
             Object.keys(groupedAssignments).forEach(subject => {
                 const subjectAssignments = groupedAssignments[subject];
                 const avgScore = subjectAssignments.reduce((sum, a) => sum + (a.score || 0), 0) / subjectAssignments.length;
                 
-                html += `
-                    <div class="subject-assignments">
-                        <div class="subject-header">
-                            <h3>${subject}</h3>
-                            <span class="subject-average">Rata-rata: ${avgScore.toFixed(1)}</span>
-                        </div>
-                        <div class="assignments">
-                `;
+                // html += `
+                //     <div class="subject-assignments">
+                //         <div class="subject-header">
+                //             <h3>${subject}</h3>
+                //             <span class="subject-average">Rata-rata: ${avgScore.toFixed(1)}</span>
+                //         </div>
+                //         <div class="assignments">
+                // `;
                 
-                subjectAssignments.forEach(assignment => {
-                    const scoreColor = assignment.score >= 75 ? 'success' : assignment.score >= 60 ? 'warning' : 'danger';
-                    html += `
-                        <div class="assignment-card">
-                            <div class="assignment-info">
-                                <h4>${assignment.title}</h4>
-                                <p class="assignment-date">Tanggal: ${MonitoringApp.formatDate(assignment.dueDate)}</p>
-                            </div>
-                            <div class="assignment-score score-${scoreColor}">
-                                ${assignment.score || 'Belum dinilai'}
-                            </div>
-                        </div>
-                    `;
-                });
+                // subjectAssignments.forEach(assignment => {
+                //     const scoreColor = assignment.score >= 75 ? 'success' : assignment.score >= 60 ? 'warning' : 'danger';
+                //     html += `
+                //         <div class="assignment-card">
+                //             <div class="assignment-info">
+                //                 <h4>${assignment.title}</h4>
+                //                 <p class="assignment-date">Tanggal: ${MonitoringApp.formatDate(assignment.dueDate)}</p>
+                //             </div>
+                //             <div class="assignment-score score-${scoreColor}">
+                //                 ${assignment.score || 'Belum dinilai'}
+                //             </div>
+                //         </div>
+                //     `;
+                // });
                 
-                html += '</div></div>';
+                // html += '</div></div>';
+                html+=`<tr><td>${subject}</td><td>80</td><td>82</td><td>89</td></tr>`;
             });
+            html+='</table>';
+
+            html+="<b>Tugas</b>";
+            html+="<table><tr><td>Nama Mapel</td><td>Isi Tugas</td><td>Jenis</td></tr>";
+
+            html+="<tr><td>Matematikaa<br><small>12 oktober 2025</small></td><td>Menghitung Perkalian</td><td>Kelompok</td></tr>"
             
             assignmentsList.innerHTML = html;
         }
@@ -875,7 +957,23 @@
             
             document.getElementById('bullyingReportModal').style.display = 'flex';
         }
+        function showFeedbackReportModal() {
+            // Populate child select
+            const childSelect = document.getElementById('feedbackChildSelect');
+            childSelect.innerHTML = '<option value="">Pilih anak...</option>';
+            currentChildren.forEach(child => {
+                childSelect.innerHTML += `<option value="${child.id}">${child.name}</option>`;
+            });
+            
+            // Set today's date as default
+            
+            document.getElementById('feedbackReportModal').style.display = 'flex';
+        }
 
+        function closeFeedbackReportModal() {
+            document.getElementById('feedbackReportModal').style.display = 'none';
+            document.getElementById('feedbackReportForm').reset();
+        }
         function closeBullyingReportModal() {
             document.getElementById('bullyingReportModal').style.display = 'none';
             document.getElementById('bullyingReportForm').reset();
