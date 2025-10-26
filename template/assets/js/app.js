@@ -266,6 +266,425 @@ const dummyData = {
             targetAudience: ["orang-tua", "siswa"],
             isActive: true
         }
+    ],
+    
+    // School News Data
+    schoolNews: [
+        {
+            id: 1,
+            title: "Pengumuman Libur Semester",
+            date: "2024-10-15",
+            category: "Pengumuman",
+            content: "Libur semester akan dimulai tanggal 20 Desember 2024 hingga 5 Januari 2025. Siswa diharapkan memanfaatkan waktu libur dengan baik untuk beristirahat dan mempersiapkan diri untuk semester berikutnya.",
+            image: "https://via.placeholder.com/400x200?text=Libur+Semester",
+            author: "Kepala Sekolah",
+            isActive: true
+        },
+        {
+            id: 2,
+            title: "Pendaftaran Ekstrakurikuler Tahun Ajaran Baru",
+            date: "2024-10-10",
+            category: "Kegiatan",
+            content: "Pendaftaran ekstrakurikuler dibuka mulai 1 November 2024. Tersedia berbagai pilihan seperti Pramuka, Basket, Musik, Robotika, Bahasa Inggris, dan Seni Tari. Pendaftaran dapat dilakukan melalui wali kelas masing-masing.",
+            image: "https://via.placeholder.com/400x200?text=Ekstrakurikuler",
+            author: "Wakil Kepala Sekolah Kesiswaan",
+            isActive: true
+        },
+        {
+            id: 3,
+            title: "Prestasi Siswa di Olimpiade Matematika",
+            date: "2024-10-05",
+            category: "Prestasi",
+            content: "Selamat kepada tim olimpiade matematika yang berhasil meraih medali emas tingkat provinsi. Ini merupakan kebanggaan sekolah dan motivasi bagi siswa lainnya untuk terus berprestasi.",
+            image: "https://via.placeholder.com/400x200?text=Olimpiade",
+            author: "Kepala Sekolah",
+            isActive: true
+        },
+        {
+            id: 4,
+            title: "Pelaksanaan Ujian Tengah Semester",
+            date: "2024-09-28",
+            category: "Akademik",
+            content: "UTS akan dilaksanakan pada tanggal 15-22 November 2024. Siswa diharapkan mempersiapkan diri dengan baik. Jadwal lengkap dapat dilihat di papan pengumuman sekolah atau melalui wali kelas.",
+            image: "https://via.placeholder.com/400x200?text=UTS",
+            author: "Wakil Kepala Sekolah Kurikulum",
+            isActive: true
+        },
+        {
+            id: 5,
+            title: "Program Vaksinasi COVID-19 Booster",
+            date: "2024-09-20",
+            category: "Kesehatan",
+            content: "Sekolah bekerja sama dengan Puskesmas setempat akan mengadakan program vaksinasi booster COVID-19 untuk siswa kelas X-XII pada tanggal 10 Oktober 2024. Mohon membawa kartu vaksinasi.",
+            image: "https://via.placeholder.com/400x200?text=Vaksinasi",
+            author: "UKS",
+            isActive: true
+        },
+        {
+            id: 6,
+            title: "Kompetisi Cerdas Cermat Antar Kelas",
+            date: "2024-09-15",
+            category: "Kegiatan",
+            content: "Akan dilaksanakan kompetisi cerdas cermat antar kelas pada 25 September 2024. Setiap kelas diwajibkan mengirimkan 3 siswa sebagai perwakilan. Pendaftaran melalui wali kelas.",
+            image: "https://via.placeholder.com/400x200?text=Cerdas+Cermat",
+            author: "OSIS",
+            isActive: true
+        }
+    ],
+    
+    // School Structure Data
+    schoolStructure: [
+        {
+            id: 1,
+            position: "Kepala Sekolah",
+            name: "Dr. Ahmad Yani, M.Pd",
+            phone: "08123456789",
+            email: "kepala@sekolah.com",
+            photo: "https://via.placeholder.com/100?text=KS",
+            nip: "196505151990031001",
+            education: "S3 Pendidikan",
+            startYear: 2020
+        },
+        {
+            id: 2,
+            position: "Wakil Kepala Sekolah Kurikulum",
+            name: "Dra. Siti Nurhaliza, M.Pd",
+            phone: "08123456788",
+            email: "waka.kurikulum@sekolah.com",
+            photo: "https://via.placeholder.com/100?text=WK",
+            nip: "196805201991032001",
+            education: "S2 Pendidikan",
+            startYear: 2018
+        },
+        {
+            id: 3,
+            position: "Wakil Kepala Sekolah Kesiswaan",
+            name: "Bambang Santoso, S.Pd",
+            phone: "08123456787",
+            email: "waka.kesiswaan@sekolah.com",
+            photo: "https://via.placeholder.com/100?text=WK",
+            nip: "197003101992031002",
+            education: "S1 Pendidikan",
+            startYear: 2019
+        },
+        {
+            id: 4,
+            position: "Wakil Kepala Sekolah Sarana Prasarana",
+            name: "Ir. Joko Widodo, M.T",
+            phone: "08123456786",
+            email: "waka.sarpras@sekolah.com",
+            photo: "https://via.placeholder.com/100?text=WK",
+            nip: "196907151993031003",
+            education: "S2 Teknik",
+            startYear: 2021
+        },
+        {
+            id: 5,
+            position: "Wakil Kepala Sekolah Humas",
+            name: "Lisa Permata, S.Sos, M.M",
+            phone: "08123456785",
+            email: "waka.humas@sekolah.com",
+            photo: "https://via.placeholder.com/100?text=WK",
+            nip: "197505101994032001",
+            education: "S2 Manajemen",
+            startYear: 2020
+        },
+        {
+            id: 6,
+            position: "Wali Kelas X-A",
+            name: "Dewi Lestari, S.Pd",
+            phone: "08123456784",
+            email: "walikelas.xa@sekolah.com",
+            photo: "https://via.placeholder.com/100?text=WK",
+            nip: "198001152005012001",
+            education: "S1 Pendidikan Matematika",
+            startYear: 2015
+        },
+        {
+            id: 7,
+            position: "Wali Kelas X-B",
+            name: "Rina Susanti, S.Pd",
+            phone: "08123456783",
+            email: "walikelas.xb@sekolah.com",
+            photo: "https://via.placeholder.com/100?text=WK",
+            nip: "198103202006012002",
+            education: "S1 Pendidikan Bahasa Indonesia",
+            startYear: 2016
+        },
+        {
+            id: 8,
+            position: "Wali Kelas XI-A",
+            name: "Budi Santoso, S.Pd",
+            phone: "08123456782",
+            email: "walikelas.xia@sekolah.com",
+            photo: "https://via.placeholder.com/100?text=WK",
+            nip: "197909152005011001",
+            education: "S1 Pendidikan IPA",
+            startYear: 2014
+        },
+        {
+            id: 9,
+            position: "Wali Kelas XI-B",
+            name: "Ani Wijaya, S.Pd",
+            phone: "08123456781",
+            email: "walikelas.xib@sekolah.com",
+            photo: "https://via.placeholder.com/100?text=WK",
+            nip: "198205102007012001",
+            education: "S1 Pendidikan IPS",
+            startYear: 2017
+        },
+        {
+            id: 10,
+            position: "Wali Kelas XII-A",
+            name: "Hendra Gunawan, S.Pd",
+            phone: "08123456780",
+            email: "walikelas.xiia@sekolah.com",
+            photo: "https://via.placeholder.com/100?text=WK",
+            nip: "197807252004011001",
+            education: "S1 Pendidikan Fisika",
+            startYear: 2013
+        },
+        {
+            id: 11,
+            position: "Wali Kelas XII-B",
+            name: "Maya Sari, S.Pd",
+            phone: "08123456779",
+            email: "walikelas.xiib@sekolah.com",
+            photo: "https://via.placeholder.com/100?text=WK",
+            nip: "198106152006012003",
+            education: "S1 Pendidikan Kimia",
+            startYear: 2016
+        },
+        {
+            id: 12,
+            position: "Koordinator BK",
+            name: "Drs. Wahyu Hidayat",
+            phone: "08123456778",
+            email: "bk@sekolah.com",
+            photo: "https://via.placeholder.com/100?text=BK",
+            nip: "196612101991031001",
+            education: "S1 Bimbingan Konseling",
+            startYear: 2010
+        },
+        {
+            id: 13,
+            position: "Kepala Perpustakaan",
+            name: "Sri Mulyani, S.Pd",
+            phone: "08123456777",
+            email: "perpustakaan@sekolah.com",
+            photo: "https://via.placeholder.com/100?text=PP",
+            nip: "197804201999032001",
+            education: "S1 Perpustakaan",
+            startYear: 2012
+        },
+        {
+            id: 14,
+            position: "Kepala Laboratorium",
+            name: "Dr. Eko Prasetyo, M.Si",
+            phone: "08123456776",
+            email: "lab@sekolah.com",
+            photo: "https://via.placeholder.com/100?text=LAB",
+            nip: "197601102001031001",
+            education: "S3 Sains",
+            startYear: 2015
+        }
+    ],
+    
+    // Classes Data
+    classes: [
+        {
+            id: "X-A",
+            name: "Kelas X-A",
+            level: "X",
+            waliKelasId: 6,
+            waliKelasName: "Dewi Lestari, S.Pd",
+            capacity: 36,
+            currentStudents: 32,
+            room: "Ruang 101",
+            academicYear: "2024/2025"
+        },
+        {
+            id: "X-B",
+            name: "Kelas X-B",
+            level: "X",
+            waliKelasId: 7,
+            waliKelasName: "Rina Susanti, S.Pd",
+            capacity: 36,
+            currentStudents: 30,
+            room: "Ruang 102",
+            academicYear: "2024/2025"
+        },
+        {
+            id: "XI-A",
+            name: "Kelas XI-A",
+            level: "XI",
+            waliKelasId: 8,
+            waliKelasName: "Budi Santoso, S.Pd",
+            capacity: 36,
+            currentStudents: 28,
+            room: "Ruang 201",
+            academicYear: "2024/2025"
+        },
+        {
+            id: "XI-B",
+            name: "Kelas XI-B",
+            level: "XI",
+            waliKelasId: 9,
+            waliKelasName: "Ani Wijaya, S.Pd",
+            capacity: 36,
+            currentStudents: 29,
+            room: "Ruang 202",
+            academicYear: "2024/2025"
+        },
+        {
+            id: "XII-A",
+            name: "Kelas XII-A",
+            level: "XII",
+            waliKelasId: 10,
+            waliKelasName: "Hendra Gunawan, S.Pd",
+            capacity: 36,
+            currentStudents: 31,
+            room: "Ruang 301",
+            academicYear: "2024/2025"
+        },
+        {
+            id: "XII-B",
+            name: "Kelas XII-B",
+            level: "XII",
+            waliKelasId: 11,
+            waliKelasName: "Maya Sari, S.Pd",
+            capacity: 36,
+            currentStudents: 27,
+            room: "Ruang 302",
+            academicYear: "2024/2025"
+        }
+    ],
+    
+    // Student Achievements Data
+    studentAchievements: [
+        {
+            id: 1,
+            studentId: 1,
+            studentName: "Ahmad Rizki",
+            class: "X-A",
+            achievement: "Juara 1 Olimpiade Matematika Tingkat Provinsi",
+            date: "2024-09-15",
+            category: "Akademik",
+            level: "Provinsi",
+            medal: "gold",
+            description: "Berhasil meraih juara 1 pada Olimpiade Matematika tingkat Provinsi dengan nilai sempurna.",
+            certificate: "CERT-2024-001.pdf"
+        },
+        {
+            id: 2,
+            studentId: 2,
+            studentName: "Siti Nurhaliza",
+            class: "X-A",
+            achievement: "Juara 2 Lomba Menulis Cerpen Tingkat Nasional",
+            date: "2024-09-10",
+            category: "Seni",
+            level: "Nasional",
+            medal: "silver",
+            description: "Karya cerpen berjudul 'Cahaya di Balik Awan' berhasil meraih juara 2 tingkat nasional.",
+            certificate: "CERT-2024-002.pdf"
+        },
+        {
+            id: 3,
+            studentId: 3,
+            studentName: "Dedi Kurniawan",
+            class: "X-B",
+            achievement: "Juara 3 Kompetisi Robotika Regional",
+            date: "2024-08-20",
+            category: "Teknologi",
+            level: "Regional",
+            medal: "bronze",
+            description: "Tim robotika berhasil menciptakan robot line follower dengan performa terbaik ketiga.",
+            certificate: "CERT-2024-003.pdf"
+        },
+        {
+            id: 4,
+            studentName: "Dewi Anggraini",
+            class: "XII-B",
+            achievement: "Best Speaker Debat Bahasa Inggris",
+            date: "2024-08-15",
+            category: "Bahasa",
+            level: "Kabupaten",
+            medal: "gold",
+            description: "Menjadi pembicara terbaik dalam kompetisi debat bahasa Inggris tingkat kabupaten.",
+            certificate: "CERT-2024-004.pdf"
+        },
+        {
+            id: 5,
+            studentName: "Eko Prasetyo",
+            class: "XI-A",
+            achievement: "Atlet Terbaik Turnamen Basket Antar Sekolah",
+            date: "2024-07-25",
+            category: "Olahraga",
+            level: "Kabupaten",
+            medal: "gold",
+            description: "MVP (Most Valuable Player) turnamen basket dengan rata-rata 24 poin per pertandingan.",
+            certificate: "CERT-2024-005.pdf"
+        },
+        {
+            id: 6,
+            studentName: "Rina Wulandari",
+            class: "X-B",
+            achievement: "Juara 1 Festival Paduan Suara",
+            date: "2024-07-10",
+            category: "Seni",
+            level: "Provinsi",
+            medal: "gold",
+            description: "Paduan suara sekolah meraih juara 1 dengan penampilan lagu daerah yang memukau.",
+            certificate: "CERT-2024-006.pdf"
+        },
+        {
+            id: 7,
+            studentName: "Fajar Ramadhan",
+            class: "XII-A",
+            achievement: "Juara 2 Lomba Karya Ilmiah Remaja",
+            date: "2024-06-30",
+            category: "Akademik",
+            level: "Nasional",
+            medal: "silver",
+            description: "Penelitian tentang 'Pemanfaatan Limbah Organik untuk Biogas' meraih juara 2 nasional.",
+            certificate: "CERT-2024-007.pdf"
+        },
+        {
+            id: 8,
+            studentName: "Gita Savitri",
+            class: "XI-B",
+            achievement: "Juara 1 Lomba Fotografi",
+            date: "2024-06-15",
+            category: "Seni",
+            level: "Provinsi",
+            medal: "gold",
+            description: "Foto dengan tema 'Keindahan Alam Indonesia' menjadi yang terbaik.",
+            certificate: "CERT-2024-008.pdf"
+        },
+        {
+            id: 9,
+            studentName: "Hadi Suryanto",
+            class: "XII-A",
+            achievement: "Juara 3 Olimpiade Fisika",
+            date: "2024-05-20",
+            category: "Akademik",
+            level: "Provinsi",
+            medal: "bronze",
+            description: "Berhasil masuk 3 besar olimpiade fisika dengan soal-soal tingkat tinggi.",
+            certificate: "CERT-2024-009.pdf"
+        },
+        {
+            id: 10,
+            studentName: "Indah Pertiwi",
+            class: "XI-A",
+            achievement: "Best Dancer Kompetisi Tari Modern",
+            date: "2024-05-10",
+            category: "Seni",
+            level: "Kabupaten",
+            medal: "gold",
+            description: "Penari terbaik dengan koreografi orisinal yang memukau juri.",
+            certificate: "CERT-2024-010.pdf"
+        }
     ]
 };
 
@@ -699,6 +1118,127 @@ function getAnnouncementsForParent() {
     return getAnnouncementsForRole('orang-tua');
 }
 
+// School News Functions
+function getAllSchoolNews() {
+    return dummyData.schoolNews
+        .filter(news => news.isActive)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+function getSchoolNewsByCategory(category) {
+    return dummyData.schoolNews
+        .filter(news => news.isActive && news.category === category)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+function getSchoolNewsById(id) {
+    return dummyData.schoolNews.find(news => news.id === id);
+}
+
+// School Structure Functions
+function getAllSchoolStructure() {
+    return dummyData.schoolStructure;
+}
+
+function getSchoolStructureByPosition(position) {
+    return dummyData.schoolStructure.filter(person => 
+        person.position.toLowerCase().includes(position.toLowerCase())
+    );
+}
+
+function getSchoolStructureById(id) {
+    return dummyData.schoolStructure.find(person => person.id === id);
+}
+
+function getWaliKelasList() {
+    return dummyData.schoolStructure.filter(person => 
+        person.position.includes("Wali Kelas")
+    );
+}
+
+// Classes Functions
+function getAllClasses() {
+    return dummyData.classes;
+}
+
+function getClassById(classId) {
+    return dummyData.classes.find(cls => cls.id === classId);
+}
+
+function getClassesByLevel(level) {
+    return dummyData.classes.filter(cls => cls.level === level);
+}
+
+function getStudentsByClass(classId) {
+    return dummyData.students.filter(student => student.class === classId);
+}
+
+function getClassStatistics(classId) {
+    const classData = getClassById(classId);
+    const students = getStudentsByClass(classId);
+    
+    let totalGrades = 0;
+    let gradeCount = 0;
+    
+    students.forEach(student => {
+        if (student.grades && student.grades["2024/2025"]) {
+            const grades = student.grades["2024/2025"];
+            Object.values(grades).forEach(grade => {
+                if (grade.uts && grade.uas) {
+                    totalGrades += (grade.uts + grade.uas) / 2;
+                    gradeCount++;
+                }
+            });
+        }
+    });
+    
+    return {
+        className: classData?.name || classId,
+        totalStudents: students.length,
+        capacity: classData?.capacity || 36,
+        averageGrade: gradeCount > 0 ? (totalGrades / gradeCount).toFixed(2) : 0,
+        waliKelas: classData?.waliKelasName || '-',
+        room: classData?.room || '-'
+    };
+}
+
+// Student Achievements Functions
+function getAllStudentAchievements() {
+    return dummyData.studentAchievements.sort((a, b) => 
+        new Date(b.date) - new Date(a.date)
+    );
+}
+
+function getAchievementsByStudent(studentId) {
+    return dummyData.studentAchievements
+        .filter(ach => ach.studentId === studentId)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+function getAchievementsByClass(classId) {
+    return dummyData.studentAchievements
+        .filter(ach => ach.class === classId)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+function getAchievementsByCategory(category) {
+    return dummyData.studentAchievements
+        .filter(ach => ach.category === category)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+function getAchievementsByLevel(level) {
+    return dummyData.studentAchievements
+        .filter(ach => ach.level === level)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+function getRecentAchievements(limit = 10) {
+    return dummyData.studentAchievements
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, limit);
+}
+
 // Initialize page
 function initPage() {
     // Add event listeners for common elements
@@ -729,22 +1269,46 @@ window.MonitoringApp = {
     getInitials,
     calculateAverage,
     dummyData,
-    // New functions
+    // Assignment & Notes functions
     addAssignment,
     getAssignmentsByStudent,
     getAssignmentsByTeacher,
     addStudentNote,
     getStudentNotes,
     markNoteAsRead,
+    // Attendance functions
     addAttendance,
     getAttendanceByDate,
     getAttendanceByStudent,
+    // Bullying & Announcements functions
     addBullyingReport,
     getBullyingReportsByParent,
     updateBullyingReportStatus,
     addAnnouncement,
     getAnnouncementsForRole,
-    getAnnouncementsForParent
+    getAnnouncementsForParent,
+    // School News functions
+    getAllSchoolNews,
+    getSchoolNewsByCategory,
+    getSchoolNewsById,
+    // School Structure functions
+    getAllSchoolStructure,
+    getSchoolStructureByPosition,
+    getSchoolStructureById,
+    getWaliKelasList,
+    // Classes functions
+    getAllClasses,
+    getClassById,
+    getClassesByLevel,
+    getStudentsByClass,
+    getClassStatistics,
+    // Student Achievements functions
+    getAllStudentAchievements,
+    getAchievementsByStudent,
+    getAchievementsByClass,
+    getAchievementsByCategory,
+    getAchievementsByLevel,
+    getRecentAchievements
 };
 
 // Initialize when DOM is loaded

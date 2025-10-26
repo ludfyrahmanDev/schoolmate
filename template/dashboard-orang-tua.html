@@ -35,14 +35,14 @@
                 <i class="fas fa-child"></i>
                 <span>Anak</span>
             </button>
-            <button class="nav-btn" onclick="showSection('assignments')" data-section="assignments">
+            <!-- <button class="nav-btn" onclick="showSection('assignments')" data-section="assignments">
                 <i class="fas fa-tasks"></i>
                 <span>Tugas</span>
             </button>
             <button class="nav-btn" onclick="showSection('notes')" data-section="notes">
                 <i class="fas fa-sticky-note"></i>
                 <span>Catatan</span>
-            </button>
+            </button> -->
             <button class="nav-btn" onclick="showSection('announcements')" data-section="announcements">
                 <i class="fas fa-bullhorn"></i>
                 <span>Info</span>
@@ -51,66 +51,132 @@
                 <i class="fas fa-shield-alt"></i>
                 <span>Lapor</span>
             </button>
-            <button class="nav-btn" onclick="showSection('feedback')" data-section="feedback">
+            <!-- <button class="nav-btn" onclick="showSection('feedback')" data-section="feedback">
                 <i class="fas fa-comment"></i>
                 <span>Feedback</span>
-            </button>
+            </button> -->
         </nav>
 
         <!-- Dashboard Section -->
         <section id="dashboard" class="content-section mobile-content">
-            <!-- Stats Cards -->
-            <div class="mobile-stats">
-                <div class="stat-card mobile-stat">
-                    <div class="stat-icon">
-                        <i class="fas fa-star" style="color: #ffd700;"></i>
+            <!-- Menu Grid -->
+            <div class="dashboard-menu">
+                <div class="menu-card" onclick="showSection('school-news')">
+                    <div class="menu-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-newspaper"></i>
                     </div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="averageGrade">0</div>
-                        <div class="stat-label">Rata-rata Nilai</div>
-                    </div>
+                    <h3>Berita Sekolah</h3>
+                    <p>Informasi terbaru dari sekolah</p>
                 </div>
-                
-                <div class="stat-card mobile-stat">
-                    <div class="stat-icon">
-                        <i class="fas fa-wallet" style="color: #ff6b6b;"></i>
-                    </div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="totalExpense">Rp 0</div>
-                        <div class="stat-label">Pengeluaran</div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <h3 class="section-title">Aksi Cepat</h3>
-                <div class="action-grid">
-                    <button class="action-btn" onclick="showSection('children')">
+                <div class="menu-card" onclick="showSection('school-structure')">
+                    <div class="menu-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="fas fa-sitemap"></i>
+                    </div>
+                    <h3>Struktur Sekolah</h3>
+                    <p>Informasi struktur organisasi</p>
+                </div>
+
+                <div class="menu-card" onclick="showSection('class-students')">
+                    <div class="menu-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                         <i class="fas fa-users"></i>
-                        <span>Lihat Anak</span>
-                    </button>
-                    <button class="action-btn" onclick="showChildGrades()">
-                        <i class="fas fa-graduation-cap"></i>
-                        <span>Nilai Rapor</span>
-                    </button>
-                    <button class="action-btn" onclick="showTransactionHistory()">
-                        <i class="fas fa-receipt"></i>
-                        <span>Riwayat</span>
-                    </button>
-                    <button class="action-btn" onclick="showBalance()">
-                        <i class="fas fa-credit-card"></i>
-                        <span>Saldo</span>
-                    </button>
+                    </div>
+                    <h3>Siswa Kelas</h3>
+                    <p>Daftar siswa per kelas</p>
+                </div>
+
+                <div class="menu-card" onclick="showSection('student-achievements')">
+                    <div class="menu-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Prestasi Siswa</h3>
+                    <p>Prestasi siswa sekolah</p>
                 </div>
             </div>
+        </section>
 
-            <!-- Recent Activity -->
-            <div class="recent-activity">
-                <h3 class="section-title">Aktivitas Terbaru</h3>
-                <div id="recentActivities" class="activity-list">
-                    <!-- Activities will be populated by JavaScript -->
+        <!-- School News Section -->
+        <section id="school-news" class="content-section mobile-content" style="display: none;">
+            <div class="section-header">
+                <button class="back-btn" onclick="showSection('dashboard')">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div>
+                    <h2>Berita Sekolah</h2>
+                    <p>Informasi dan pengumuman terbaru</p>
                 </div>
+            </div>
+            
+            <div id="schoolNewsList" class="news-list">
+                <!-- News will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- School Structure Section -->
+        <section id="school-structure" class="content-section mobile-content" style="display: none;">
+            <div class="section-header">
+                <button class="back-btn" onclick="showSection('dashboard')">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div>
+                    <h2>Struktur Sekolah</h2>
+                    <p>Organisasi dan kepemimpinan</p>
+                </div>
+            </div>
+            
+            <div id="schoolStructureList" class="structure-list">
+                <!-- Structure will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Class Students Section -->
+        <section id="class-students" class="content-section mobile-content" style="display: none;">
+            <div class="section-header">
+                <button class="back-btn" onclick="showSection('dashboard')">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div>
+                    <h2>Siswa Kelas</h2>
+                    <p>Daftar siswa per kelas</p>
+                </div>
+            </div>
+            
+            <div id="classList" class="class-list">
+                <!-- Classes will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Class Detail Section -->
+        <section id="class-detail" class="content-section mobile-content" style="display: none;">
+            <div class="section-header">
+                <button class="back-btn" onclick="showSection('class-students')">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div>
+                    <h2 id="classDetailTitle">Kelas</h2>
+                    <p id="classDetailSubtitle">Daftar siswa</p>
+                </div>
+            </div>
+            
+            <div id="classStudentsList" class="students-list">
+                <!-- Students will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Student Achievements Section -->
+        <section id="student-achievements" class="content-section mobile-content" style="display: none;">
+            <div class="section-header">
+                <button class="back-btn" onclick="showSection('dashboard')">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div>
+                    <h2>Prestasi Siswa</h2>
+                    <p>Pencapaian siswa di sekolah</p>
+                </div>
+            </div>
+            
+            <div id="achievementsList" class="achievements-list">
+                <!-- Achievements will be populated by JavaScript -->
             </div>
         </section>
 
@@ -405,18 +471,169 @@
             document.getElementById('userName').textContent = user.username;
             document.getElementById('userAvatar').textContent = MonitoringApp.getInitials(user.username);
             
-            loadDashboardStats();
+            // Load initial data
             loadChildren();
-            loadRecentActivities();
+        }
+
+        // School News Functions
+        function loadSchoolNews() {
+            const newsList = document.getElementById('schoolNewsList');
+            const news = MonitoringApp.getAllSchoolNews();
+            
+            let html = '';
+            news.forEach(item => {
+                html += `
+                    <div class="news-card">
+                        <div class="news-image" style="background-image: url('${item.image}')"></div>
+                        <div class="news-content">
+                            <div class="news-meta">
+                                <span class="news-category">${item.category}</span>
+                                <span class="news-date">${MonitoringApp.formatDate(item.date)}</span>
+                            </div>
+                            <h3>${item.title}</h3>
+                            <p>${item.content}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            newsList.innerHTML = html;
+        }
+
+        // School Structure Functions
+        function loadSchoolStructure() {
+            const structureList = document.getElementById('schoolStructureList');
+            const structure = MonitoringApp.getAllSchoolStructure();
+            
+            let html = '';
+            structure.forEach(person => {
+                html += `
+                    <div class="structure-card">
+                        <div class="structure-photo" style="background-image: url('${person.photo}')"></div>
+                        <div class="structure-info">
+                            <h3>${person.name}</h3>
+                            <p class="structure-position">${person.position}</p>
+                            <div class="structure-contact">
+                                <div class="contact-item">
+                                    <i class="fas fa-phone"></i>
+                                    <span>${person.phone}</span>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>${person.email}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            structureList.innerHTML = html;
+        }
+
+        // Class Students Functions
+        function loadClassList() {
+            const classList = document.getElementById('classList');
+            const classes = MonitoringApp.getAllClasses();
+            
+            let html = '';
+            classes.forEach(cls => {
+                html += `
+                    <div class="class-card" onclick="showClassDetail('${cls.id}', '${cls.name}', ${cls.currentStudents})">
+                        <div class="class-icon">
+                            <i class="fas fa-door-open"></i>
+                        </div>
+                        <div class="class-info">
+                            <h3>${cls.name}</h3>
+                            <p class="class-wali"><i class="fas fa-user-tie"></i> ${cls.waliKelasName}</p>
+                            <p class="class-count"><i class="fas fa-users"></i> ${cls.currentStudents} Siswa</p>
+                        </div>
+                        <i class="fas fa-chevron-right class-arrow"></i>
+                    </div>
+                `;
+            });
+            
+            classList.innerHTML = html;
+        }
+
+        function showClassDetail(classId, className, studentCount) {
+            document.getElementById('classDetailTitle').textContent = className;
+            document.getElementById('classDetailSubtitle').textContent = `${studentCount} Siswa`;
+            
+            // Get students for this class
+            const students = MonitoringApp.getStudentsByClass(classId);
+            
+            const studentsList = document.getElementById('classStudentsList');
+            let html = '';
+            
+            if (students.length === 0) {
+                html = '<p class="no-data">Tidak ada data siswa</p>';
+            } else {
+                students.forEach(student => {
+                    html += `
+                        <div class="student-card">
+                            <div class="student-avatar">
+                                ${MonitoringApp.getInitials(student.name)}
+                            </div>
+                            <div class="student-info">
+                                <h4>${student.name}</h4>
+                                <p class="student-nisn">NISN: ${student.nisn}</p>
+                            </div>
+                            <div class="student-badge">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            studentsList.innerHTML = html;
+            showSection('class-detail');
+        }
+
+        // Student Achievements Functions
+        function loadStudentAchievements() {
+            const achievementsList = document.getElementById('achievementsList');
+            const achievements = MonitoringApp.getAllStudentAchievements();
+            
+            let html = '';
+            achievements.forEach(achievement => {
+                const medalColors = {
+                    gold: '#FFD700',
+                    silver: '#C0C0C0',
+                    bronze: '#CD7F32'
+                };
+                
+                html += `
+                    <div class="achievement-card">
+                        <div class="achievement-medal" style="background: ${medalColors[achievement.medal]};">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="achievement-info">
+                            <h3>${achievement.achievement}</h3>
+                            <div class="achievement-meta">
+                                <span class="achievement-student">
+                                    <i class="fas fa-user"></i> ${achievement.studentName}
+                                </span>
+                                <span class="achievement-class">
+                                    <i class="fas fa-door-open"></i> ${achievement.class}
+                                </span>
+                            </div>
+                            <div class="achievement-footer">
+                                <span class="achievement-category">${achievement.category}</span>
+                                <span class="achievement-date">${MonitoringApp.formatDate(achievement.date)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            achievementsList.innerHTML = html;
         }
 
         function loadDashboardStats() {
-            // For demo, assume parent "Budi Santoso"
+            // Kept for compatibility but no longer used in UI
             const stats = MonitoringApp.getOrangTuaStats("Budi Santoso");
-            
-            document.getElementById('averageGrade').textContent = stats.averageGrade;
-            document.getElementById('totalExpense').textContent = MonitoringApp.formatCurrency(stats.totalExpense);
-            
             currentChildren = stats.children;
         }
 
@@ -460,58 +677,6 @@
                 option.value = child.id;
                 option.textContent = child.name;
                 childSelectGrades.appendChild(option);
-            });
-        }
-
-        function loadRecentActivities() {
-            const activitiesDiv = document.getElementById('recentActivities');
-            const activities = [];
-            
-            // Get recent transactions for children
-            currentChildren.forEach(child => {
-                MonitoringApp.dummyData.transactions
-                    .filter(t => t.studentId === child.id)
-                    .forEach(transaction => {
-                        activities.push({
-                            type: 'transaction',
-                            child: child.name,
-                            description: `Pembelian di kantin`,
-                            amount: transaction.total,
-                            date: transaction.date,
-                            icon: 'fas fa-shopping-cart'
-                        });
-                    });
-            });
-            
-            // Add some dummy activities
-            activities.push({
-                type: 'grade',
-                child: currentChildren[0]?.name || 'Anak',
-                description: 'Nilai UTS Matematika',
-                amount: null,
-                date: '2024-09-20',
-                icon: 'fas fa-graduation-cap'
-            });
-            
-            // Sort by date (newest first)
-            activities.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            activitiesDiv.innerHTML = '';
-            
-            activities.slice(0, 5).forEach(activity => {
-                const activityDiv = document.createElement('div');
-                activityDiv.className = 'activity-item';
-                activityDiv.innerHTML = `
-                    <div class="activity-icon">
-                        <i class="${activity.icon}"></i>
-                    </div>
-                    <div class="activity-info">
-                        <h4>${activity.description}</h4>
-                        <p>${activity.child} • ${MonitoringApp.formatDate(activity.date)}</p>
-                        ${activity.amount ? `<span class="activity-amount">${MonitoringApp.formatCurrency(activity.amount)}</span>` : ''}
-                    </div>
-                `;
-                activitiesDiv.appendChild(activityDiv);
             });
         }
 
@@ -677,7 +842,52 @@
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+            const activeBtn = document.querySelector(`[data-section="${sectionName}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+            
+            // Load data for specific sections
+            switch(sectionName) {
+                case 'school-news':
+                    loadSchoolNews();
+                    break;
+                case 'school-structure':
+                    loadSchoolStructure();
+                    break;
+                case 'class-students':
+                    loadClassList();
+                    break;
+                case 'student-achievements':
+                    loadStudentAchievements();
+                    break;
+                case 'assignments':
+                    // Populate child select for assignments
+                    const assignmentChildSelect = document.getElementById('assignmentChildSelect');
+                    if (assignmentChildSelect) {
+                        assignmentChildSelect.innerHTML = '<option value="">Pilih anak...</option>';
+                        currentChildren.forEach(child => {
+                            assignmentChildSelect.innerHTML += `<option value="${child.id}">${child.name}</option>`;
+                        });
+                    }
+                    break;
+                case 'notes':
+                    // Populate child select for notes
+                    const notesChildSelect = document.getElementById('notesChildSelect');
+                    if (notesChildSelect) {
+                        notesChildSelect.innerHTML = '<option value="">Pilih anak...</option>';
+                        currentChildren.forEach(child => {
+                            notesChildSelect.innerHTML += `<option value="${child.id}">${child.name}</option>`;
+                        });
+                    }
+                    break;
+                case 'announcements':
+                    loadAnnouncements();
+                    break;
+                case 'anti-bullying':
+                    loadBullyingReports();
+                    break;
+            }
         }
 
         // Initialize page
@@ -1068,25 +1278,44 @@
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+            const activeBtn = document.querySelector(`[data-section="${sectionName}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
             
             // Load data for specific sections
             switch(sectionName) {
+                case 'school-news':
+                    loadSchoolNews();
+                    break;
+                case 'school-structure':
+                    loadSchoolStructure();
+                    break;
+                case 'class-students':
+                    loadClassList();
+                    break;
+                case 'student-achievements':
+                    loadStudentAchievements();
+                    break;
                 case 'assignments':
                     // Populate child select for assignments
                     const assignmentChildSelect = document.getElementById('assignmentChildSelect');
-                    assignmentChildSelect.innerHTML = '<option value="">Pilih anak...</option>';
-                    currentChildren.forEach(child => {
-                        assignmentChildSelect.innerHTML += `<option value="${child.id}">${child.name}</option>`;
-                    });
+                    if (assignmentChildSelect) {
+                        assignmentChildSelect.innerHTML = '<option value="">Pilih anak...</option>';
+                        currentChildren.forEach(child => {
+                            assignmentChildSelect.innerHTML += `<option value="${child.id}">${child.name}</option>`;
+                        });
+                    }
                     break;
                 case 'notes':
                     // Populate child select for notes
                     const notesChildSelect = document.getElementById('notesChildSelect');
-                    notesChildSelect.innerHTML = '<option value="">Pilih anak...</option>';
-                    currentChildren.forEach(child => {
-                        notesChildSelect.innerHTML += `<option value="${child.id}">${child.name}</option>`;
-                    });
+                    if (notesChildSelect) {
+                        notesChildSelect.innerHTML = '<option value="">Pilih anak...</option>';
+                        currentChildren.forEach(child => {
+                            notesChildSelect.innerHTML += `<option value="${child.id}">${child.name}</option>`;
+                        });
+                    }
                     break;
                 case 'announcements':
                     loadAnnouncements();
@@ -1237,6 +1466,430 @@
             color: #666;
             font-size: 0.9rem;
             margin-bottom: 20px;
+        }
+
+        /* Dashboard Menu Grid */
+        .dashboard-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+        }
+
+        .menu-card:active {
+            transform: scale(0.95);
+        }
+
+        .menu-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .menu-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+
+        .menu-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .menu-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .menu-card p {
+            font-size: 0.8rem;
+            color: #666;
+            margin: 0;
+        }
+
+        /* Back Button */
+        .back-btn {
+            background: rgba(102, 126, 234, 0.1);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #667eea;
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+            margin-right: 15px;
+        }
+
+        .back-btn:active {
+            transform: scale(0.9);
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .section-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 5px 0;
+        }
+
+        .section-header p {
+            font-size: 0.85rem;
+            color: #666;
+            margin: 0;
+        }
+
+        /* News Card Styles */
+        .news-list {
+            padding: 15px;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            background-color: #f0f0f0;
+        }
+
+        .news-content {
+            padding: 15px;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .news-category {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .news-date {
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        .news-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 10px 0;
+            line-height: 1.4;
+        }
+
+        .news-card p {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Structure Card Styles */
+        .structure-list {
+            padding: 15px;
+        }
+
+        .structure-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            gap: 15px;
+        }
+
+        .structure-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            background-size: cover;
+            background-position: center;
+            background-color: #f0f0f0;
+            flex-shrink: 0;
+        }
+
+        .structure-info {
+            flex: 1;
+        }
+
+        .structure-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 5px 0;
+        }
+
+        .structure-position {
+            font-size: 0.85rem;
+            color: #667eea;
+            margin: 0 0 10px 0;
+            font-weight: 500;
+        }
+
+        .structure-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .contact-item i {
+            color: #667eea;
+            width: 16px;
+        }
+
+        /* Class Card Styles */
+        .class-list {
+            padding: 15px;
+        }
+
+        .class-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .class-card:active {
+            transform: scale(0.98);
+        }
+
+        .class-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .class-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .class-info {
+            flex: 1;
+        }
+
+        .class-info h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 5px 0;
+        }
+
+        .class-wali, .class-count {
+            font-size: 0.8rem;
+            color: #666;
+            margin: 2px 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .class-wali i, .class-count i {
+            color: #667eea;
+            font-size: 0.75rem;
+        }
+
+        .class-arrow {
+            color: #ccc;
+            font-size: 1.2rem;
+        }
+
+        /* Students List Styles */
+        .students-list {
+            padding: 15px;
+        }
+
+        .student-card {
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .student-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .student-info {
+            flex: 1;
+        }
+
+        .student-info h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 3px 0;
+        }
+
+        .student-nisn {
+            font-size: 0.8rem;
+            color: #999;
+            margin: 0;
+        }
+
+        .student-badge {
+            color: #28a745;
+            font-size: 1.2rem;
+        }
+
+        /* Achievement Card Styles */
+        .achievements-list {
+            padding: 15px;
+        }
+
+        .achievement-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            gap: 15px;
+        }
+
+        .achievement-medal {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .achievement-medal i {
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .achievement-info {
+            flex: 1;
+        }
+
+        .achievement-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+
+        .achievement-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .achievement-student, .achievement-class {
+            font-size: 0.8rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .achievement-student i, .achievement-class i {
+            color: #667eea;
+        }
+
+        .achievement-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .achievement-category {
+            background: #f0f0f0;
+            color: #666;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .achievement-date {
+            font-size: 0.75rem;
+            color: #999;
         }
 
         .quick-actions {
