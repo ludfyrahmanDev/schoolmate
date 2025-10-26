@@ -183,8 +183,13 @@
         <!-- Children Section -->
         <section id="children" class="content-section mobile-content" style="display: none;">
             <div class="section-header">
-                <h2 class="section-title">Daftar Anak</h2>
-                <p class="section-subtitle">Pantau perkembangan anak Anda</p>
+                <button class="back-btn" onclick="showSection('dashboard')">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div>
+                    <h2>Daftar Anak</h2>
+                    <p>Pantau perkembangan anak Anda</p>
+                </div>
             </div>
             
             <div id="childrenList" class="children-list">
@@ -470,7 +475,7 @@
             const user = MonitoringApp.getCurrentUser();
             document.getElementById('userName').textContent = user.username;
             document.getElementById('userAvatar').textContent = MonitoringApp.getInitials(user.username);
-            
+            loadDashboardStats();
             // Load initial data
             loadChildren();
         }
@@ -640,33 +645,77 @@
         function loadChildren() {
             const childrenList = document.getElementById('childrenList');
             const childSelectGrades = document.getElementById('childSelectGrades');
-            
             childrenList.innerHTML = '';
             childSelectGrades.innerHTML = '<option value="">Pilih anak...</option>';
-            
             currentChildren.forEach(child => {
-                // Main children list
+                // Main children card container
                 const childCard = document.createElement('div');
-                childCard.className = 'child-card';
-                childCard.onclick = () => viewChildDetail(child.id);
+                childCard.className = 'child-card-wrapper';
                 
                 const averageGrade = MonitoringApp.calculateAverage(child.grades[MonitoringApp.dummyData.academicYear] || {});
                 
                 childCard.innerHTML = `
-                    <div class="child-avatar">
-                        ${MonitoringApp.getInitials(child.name)}
-                    </div>
-                    <div class="child-info">
-                        <h3>${child.name}</h3>
-                        <p class="child-class">${child.class}</p>
-                        <p class="child-balance">Saldo: ${MonitoringApp.formatCurrency(child.balance)}</p>
-                    </div>
-                    <div class="child-stats">
-                        <div class="mini-stat">
-                            <span class="mini-stat-value">${averageGrade}</span>
-                            <span class="mini-stat-label">Nilai</span>
+                    <div class="child-info-card">
+                        <div class="child-stat-row">
+                            <div class="child-stat-item">
+                                <div class="child-avatar-sm">
+                                    ${MonitoringApp.getInitials(child.name)}
+                                </div>
+                                <div>
+                                    <div class="child-stat-label">Nama Anak</div>
+                                    <div class="child-stat-value">${child.name}</div>
+                                </div>
+                            </div>
+                            <div class="child-stat-divider"></div>
+                            <div class="child-stat-item">
+                                <div>
+                                    <div class="child-stat-label">Rata-rata Nilai</div>
+                                    <div class="child-stat-value">${averageGrade}</div>
+                                </div>
+                            </div>
                         </div>
-                        <i class="fas fa-chevron-right child-arrow"></i>
+                        <div class="child-stat-row">
+                            <div class="child-stat-item">
+                                <div>
+                                    <div class="child-stat-label">Kelas</div>
+                                    <div class="child-stat-value">${child.class}</div>
+                                </div>
+                            </div>
+                            <div class="child-stat-divider"></div>
+                            <div class="child-stat-item">
+                                <div>
+                                    <div class="child-stat-label">Saldo</div>
+                                    <div class="child-stat-value">${MonitoringApp.formatCurrency(child.balance)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="child-menu-grid">
+                        <div class="child-menu-item" onclick="showChildAssignments(parseInt('${child.id}'))">
+                            <i class="fas fa-tasks"></i>
+                            <span>Tugas</span>
+                        </div>
+                        <div class="child-menu-item" onclick="showChildGrades(parseInt('${child.id}'))">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Nilai Rapor</span>
+                        </div>
+                        <div class="child-menu-item" onclick="showChildNotes(parseInt('${child.id}'))">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>Catatan</span>
+                        </div>
+                        <div class="child-menu-item" onclick="showChildFeedback(parseInt('${child.id}'))">
+                            <i class="fas fa-comment-dots"></i>
+                            <span>Feedback</span>
+                        </div>
+                        <div class="child-menu-item" onclick="showChildAttendance(parseInt('${child.id}'))">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Presensi</span>
+                        </div>
+                        <div class="child-menu-item" onclick="showChildClassInfo(parseInt('${child.id}'))">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Info Kelas</span>
+                        </div>
                     </div>
                 `;
                 
@@ -796,9 +845,17 @@
                                 UAS: ${subjectGrades.uas || '-'}
                             </span>
                         </div>
+                         <div class="grade-values">
+                            <span class="grade-item ${subjectGrades.tugas1 ? 'has-grade' : ''}">
+                                Tugas 1: ${subjectGrades.tugas1 || '-'}
+                            </span>
+                            <span class="grade-item ${subjectGrades.tugas2 ? 'has-grade' : ''}">
+                                Tugas 2: ${subjectGrades.tugas2 || '-'}
+                            </span>
+                        </div>
                         <div class="grade-average">
                             Rata-rata: ${subjectGrades.uts && subjectGrades.uas ? 
-                                Math.round((subjectGrades.uts + subjectGrades.uas) / 2) : '-'
+                                Math.round((subjectGrades.uts + subjectGrades.uas + (subjectGrades.tugas1 ?? 0) + (subjectGrades.tugas2 ?? 0)) / 4) : '-'
                             }
                         </div>
                     </div>
@@ -820,6 +877,375 @@
             // For now, just show the children section
             showSection('children');
         }
+
+        // New child menu functions
+        function showChildAssignments(childId) {
+            const child = currentChildren.find(c => c.id === childId);
+            if (!child) return;
+            
+            const assignments = MonitoringApp.dummyData.assignments.filter(a => a.studentId === childId);
+            let html = '<div class="assignments-list">';
+            if (assignments.length === 0) {
+                html += '<p class="no-data">Belum ada tugas</p>';
+            } else {
+                assignments.forEach(assignment => {
+                    const statusColor = assignment.status === 'Selesai' ? 'success' : 'pending';
+                    const scoreDisplay = assignment.score ? `<div class="assignment-score">Nilai: ${assignment.score}</div>` : '';
+                    html += `
+                        <div class="assignment-item">
+                            <div class="assignment-icon ${statusColor}">
+                                <i class="fas fa-${assignment.status === 'Selesai' ? 'check-circle' : 'clock'}"></i>
+                            </div>
+                            <div class="assignment-info">
+                                <h4>${assignment.title}</h4>
+                                <p class="assignment-subject"><i class="fas fa-book"></i> ${assignment.subject}</p>
+                                <p class="assignment-date"><i class="fas fa-calendar"></i> ${MonitoringApp.formatDate(assignment.date)}</p>
+                            </div>
+                            <span class="assignment-badge ${statusColor}">${assignment.status || 'Pending'}</span>
+                        </div>
+                    `;
+                });
+            }
+            
+            html += '</div>';
+            
+            document.getElementById('childModalTitle').textContent = `Tugas - ${child.name}`;
+            document.getElementById('childModalContent').innerHTML = html;
+            document.getElementById('childModal').style.display = 'flex';
+        }
+
+        function showChildGrades(childId) {
+            const child = currentChildren.find(c => c.id === childId);
+            if (!child) return;
+            
+            document.getElementById('childSelectGrades').value = childId;
+            loadGrades();
+            document.getElementById('gradesModal').style.display = 'flex';
+        }
+
+        function loadGrades() {
+            const childId = document.getElementById('childSelectGrades').value;
+            const period = document.getElementById('periodSelectGrades').value;
+            
+            if (!childId) {
+                document.getElementById('gradesContent').innerHTML = '<p class="no-data">Pilih anak untuk melihat nilai</p>';
+                return;
+            }
+            
+            const child = currentChildren.find(c => c.id == childId);
+            const grades = child.grades[period] || {};
+            
+            let html = '<div class="grades-grid">';
+            const subjects = ['Matematika', 'Bahasa Indonesia', 'IPA', 'IPS'];
+            
+            subjects.forEach(subject => {
+                const subjectGrades = grades[subject] || {};
+                html += `
+                    <div class="grade-card">
+                        <h4>${subject}</h4>
+                        <div class="grade-values">
+                            <span class="grade-item ${subjectGrades.uts ? 'has-grade' : ''}">
+                                UTS: ${subjectGrades.uts || '-'}
+                            </span>
+                            <span class="grade-item ${subjectGrades.uas ? 'has-grade' : ''}">
+                                UAS: ${subjectGrades.uas || '-'}
+                            </span>
+                        </div>
+                        <div class="grade-values">
+                            <span class="grade-item ${subjectGrades.tugas1 ? 'has-grade' : ''}">
+                                Tugas 1: ${subjectGrades.tugas1 || '-'}
+                            </span>
+                            <span class="grade-item ${subjectGrades.tugas2 ? 'has-grade' : ''}">
+                                Tugas 2: ${subjectGrades.tugas2 || '-'}
+                            </span>
+                        </div>
+                        <div class="grade-average">
+                            Rata-rata: ${subjectGrades.uts && subjectGrades.uas ? 
+                                Math.round((subjectGrades.uts + subjectGrades.uas + (subjectGrades.tugas1 ?? 0) + (subjectGrades.tugas2 ?? 0)) / 4) : '-'
+                            }
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            document.getElementById('gradesContent').innerHTML = html;
+        }
+
+        function showChildNotes(childId) {
+            const child = currentChildren.find(c => c.id === childId);
+            if (!child) return;
+            
+            const notes = MonitoringApp.dummyData.studentNotes.filter(n => n.studentId === childId);
+            
+            let html = '<div class="notes-list">';
+            if (notes.length === 0) {
+                html += '<p class="no-data">Belum ada catatan</p>';
+            } else {
+                notes.forEach(note => {
+                    const teacherName = MonitoringApp.dummyData.teachers.find(t => t.id === note.teacherId)?.name || 'Guru Tidak Diketahui';
+                    const categoryIcon = {
+                        'akademik': 'book',
+                        'prestasi': 'trophy',
+                        'kesehatan': 'heartbeat',
+                        'perilaku': 'user-friends'
+                    };
+                    const icon = categoryIcon[note.category] || 'info-circle';
+                    html += `
+                        <div class="note-item">
+                            <div class="note-icon-wrapper">
+                                <div class="note-icon ${note.category}">
+                                    <i class="fas fa-${icon}"></i>
+                                </div>
+                            </div>
+                            <div class="note-content-wrapper">
+                                <div class="note-header">
+                                    <h4>${note.subject}</h4>
+                                    <span class="note-category ${note.category}">${note.category}</span>
+                                </div>
+                                <p class="note-text">${note.content}</p>
+                                <div class="note-footer">
+                                    <div class="teacher-badge">
+                                        <i class="fas fa-user-tie"></i>
+                                        <span>${teacherName}</span>
+                                    </div>
+                                    <div class="note-date">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>${MonitoringApp.formatDate(note.date)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
+            
+            document.getElementById('childModalTitle').textContent = `Catatan - ${child.name}`;
+            document.getElementById('childModalContent').innerHTML = html;
+            document.getElementById('childModal').style.display = 'flex';
+        }
+
+        function showChildFeedback(childId) {
+            const child = currentChildren.find(c => c.id === childId);
+            if (!child) return;
+            
+            // Get all notes as feedback
+            const notes = MonitoringApp.dummyData.studentNotes.filter(n => n.studentId === childId);
+            let html = '<div class="feedback-list">';
+            if (notes.length === 0) {
+                html += '<p class="no-data">Belum ada feedback</p>';
+            } else {
+                notes.forEach(note => {
+                    const teacherName = MonitoringApp.dummyData.teachers.find(t => t.id === note.teacherId)?.name || 'Guru Tidak Diketahui';
+                    note.teacherName = teacherName;
+                    const categoryClass = note.category || 'netral';
+                    const priorityIcon = note.priority === 'high' ? '<i class="fas fa-exclamation-circle priority-high"></i>' : '';
+                    html += `
+                        <div class="feedback-item">
+                            <div class="feedback-teacher-section">
+                                <div class="teacher-avatar-sm">${MonitoringApp.getInitials(note.teacherName)}</div>
+                                <div class="feedback-teacher-info">
+                                    <h4>${note.teacherName}</h4>
+                                    <p class="feedback-subject">${note.subject}</p>
+                                </div>
+                                <span class="feedback-category ${categoryClass}">${note.category}</span>
+                            </div>
+                            <div class="feedback-content-section">
+                                ${priorityIcon}
+                                <p class="feedback-content">${note.content}</p>
+                            </div>
+                            <div class="feedback-footer">
+                                <i class="fas fa-calendar-day"></i>
+                                <span>${MonitoringApp.formatDate(note.date)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
+            
+            document.getElementById('childModalTitle').textContent = `Feedback - ${child.name}`;
+            document.getElementById('childModalContent').innerHTML = html;
+            document.getElementById('childModal').style.display = 'flex';
+        }
+
+        function showChildAttendance(childId) {
+            const child = currentChildren.find(c => c.id === childId);
+            if (!child) return;
+            
+            const attendance = MonitoringApp.dummyData.attendance.filter(a => a.studentId === childId);
+            
+            let html = '<div class="attendance-summary">';
+            let present = attendance.filter(a => a.status === 'hadir').length;
+            let sick = attendance.filter(a => a.status === 'sakit').length;
+            let permission = attendance.filter(a => a.status === 'izin').length;
+            let absent = attendance.filter(a => a.status === 'alpha').length;
+            let total = attendance.length;
+            let percentage = total > 0 ? Math.round((present / total) * 100) : 0;
+            
+            html += `
+                <div class="attendance-overview">
+                    <div class="attendance-percentage">
+                        <div class="percentage-circle">
+                            <svg viewBox="0 0 36 36" class="circular-chart">
+                                <path class="circle-bg"
+                                    d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                />
+                                <path class="circle"
+                                    stroke-dasharray="${percentage}, 100"
+                                    d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                />
+                            </svg>
+                            <div class="percentage-text">
+                                <span class="percentage-value">${percentage}%</span>
+                                <span class="percentage-label">Kehadiran</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="attendance-stats">
+                    <div class="attendance-stat-card present">
+                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value">${present}</div>
+                            <div class="stat-label">Hadir</div>
+                        </div>
+                    </div>
+                    <div class="attendance-stat-card sick">
+                        <div class="stat-icon"><i class="fas fa-thermometer-half"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value">${sick}</div>
+                            <div class="stat-label">Sakit</div>
+                        </div>
+                    </div>
+                    <div class="attendance-stat-card permission">
+                        <div class="stat-icon"><i class="fas fa-file-signature"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value">${permission}</div>
+                            <div class="stat-label">Izin</div>
+                        </div>
+                    </div>
+                    <div class="attendance-stat-card absent">
+                        <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value">${absent}</div>
+                            <div class="stat-label">Alpha</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            html += '<h4 class="attendance-list-title">Riwayat Kehadiran</h4>';
+            html += '<div class="attendance-list">';
+            if (attendance.length === 0) {
+                html += '<p class="no-data">Belum ada data presensi</p>';
+            } else {
+                attendance.slice(0, 10).reverse().forEach(record => {
+                    const statusIcon = {
+                        'hadir': 'check-circle',
+                        'sakit': 'thermometer-half',
+                        'izin': 'file-signature',
+                        'alpha': 'times-circle'
+                    };
+                    const icon = statusIcon[record.status] || 'question-circle';
+                    const noteDisplay = record.note ? `<p class="attendance-note"><i class="fas fa-sticky-note"></i> ${record.note}</p>` : '';
+                    const timeDisplay = record.time ? `<span class="attendance-time"><i class="fas fa-clock"></i> ${record.time}</span>` : '';
+                    html += `
+                        <div class="attendance-item">
+                            <div class="attendance-icon ${record.status}">
+                                <i class="fas fa-${icon}"></i>
+                            </div>
+                            <div class="attendance-details">
+                                <div class="attendance-date">${MonitoringApp.formatDate(record.date)}</div>
+                                ${timeDisplay}
+                                ${noteDisplay}
+                            </div>
+                            <span class="attendance-status-badge ${record.status}">
+                                ${record.status.charAt(0).toUpperCase() + record.status.slice(1)}
+                            </span>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div></div>';
+            
+            document.getElementById('childModalTitle').textContent = `Presensi - ${child.name}`;
+            document.getElementById('childModalContent').innerHTML = html;
+            document.getElementById('childModal').style.display = 'flex';
+        }
+
+        function showChildClassInfo(childId) {
+            const child = currentChildren.find(c => c.id === childId);
+            if (!child) return;
+            // Get class info
+            const classInfo = MonitoringApp.getAllClasses().find(c => c.id === child.class);
+            
+            let html = '<div class="class-info-detail">';
+            if (classInfo) {
+                const teacher = MonitoringApp.dummyData.teachers.find(t => t.id === classInfo.waliKelasId);
+                html += `
+                    <div class="class-info-banner">
+                        <div class="class-icon">
+                            <i class="fas fa-school"></i>
+                        </div>
+                        <div class="class-main-info">
+                            <h3>${classInfo.name}</h3>
+                            <p><i class="fas fa-door-open"></i> ${classInfo.room}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="class-info-section">
+                        <h4 class="section-title"><i class="fas fa-chalkboard-teacher"></i> Wali Kelas</h4>
+                        <div class="teacher-card">
+                            <div class="teacher-avatar-lg">
+                                ${MonitoringApp.getInitials(classInfo.waliKelasName)}
+                            </div>
+                            <div class="teacher-details">
+                                <h4>${classInfo.waliKelasName}</h4>
+                                <p class="teacher-role">Wali Kelas ${classInfo.name}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="class-info-section">
+                        <h4 class="section-title"><i class="fas fa-info-circle"></i> Informasi Kelas</h4>
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="info-details">
+                                    <span class="info-label">Jumlah Siswa</span>
+                                    <span class="info-value">${classInfo.capacity} Siswa</span>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-door-open"></i>
+                                </div>
+                                <div class="info-details">
+                                    <span class="info-label">Ruang Kelas</span>
+                                    <span class="info-value">${classInfo.room}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += '<p class="no-data">Informasi kelas tidak tersedia</p>';
+            }
+            html += '</div>';
+            
+            document.getElementById('childModalTitle').textContent = `Info Kelas - ${child.name}`;
+            document.getElementById('childModalContent').innerHTML = html;
+            document.getElementById('childModal').style.display = 'flex';
+        }
+
 
         function closeChildModal() {
             document.getElementById('childModal').style.display = 'none';
@@ -1024,7 +1450,7 @@
 
         function displayNotes(notes, filter = 'all') {
             const notesList = document.getElementById('notesList');
-            
+            alert(filter);
             let filteredNotes = notes;
             if (filter === 'unread') {
                 filteredNotes = notes.filter(n => !n.isRead);
@@ -1262,68 +1688,6 @@
                 'closed': 'Ditutup'
             };
             return labels[status] || status;
-        }
-
-        // Initialize functions when sections are shown
-        function showSection(sectionName) {
-            // Hide all sections
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.style.display = 'none';
-            });
-            
-            // Show selected section
-            document.getElementById(sectionName).style.display = 'block';
-            
-            // Update active nav button
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            const activeBtn = document.querySelector(`[data-section="${sectionName}"]`);
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-            }
-            
-            // Load data for specific sections
-            switch(sectionName) {
-                case 'school-news':
-                    loadSchoolNews();
-                    break;
-                case 'school-structure':
-                    loadSchoolStructure();
-                    break;
-                case 'class-students':
-                    loadClassList();
-                    break;
-                case 'student-achievements':
-                    loadStudentAchievements();
-                    break;
-                case 'assignments':
-                    // Populate child select for assignments
-                    const assignmentChildSelect = document.getElementById('assignmentChildSelect');
-                    if (assignmentChildSelect) {
-                        assignmentChildSelect.innerHTML = '<option value="">Pilih anak...</option>';
-                        currentChildren.forEach(child => {
-                            assignmentChildSelect.innerHTML += `<option value="${child.id}">${child.name}</option>`;
-                        });
-                    }
-                    break;
-                case 'notes':
-                    // Populate child select for notes
-                    const notesChildSelect = document.getElementById('notesChildSelect');
-                    if (notesChildSelect) {
-                        notesChildSelect.innerHTML = '<option value="">Pilih anak...</option>';
-                        currentChildren.forEach(child => {
-                            notesChildSelect.innerHTML += `<option value="${child.id}">${child.name}</option>`;
-                        });
-                    }
-                    break;
-                case 'announcements':
-                    loadAnnouncements();
-                    break;
-                case 'anti-bullying':
-                    loadBullyingReports();
-                    break;
-            }
         }
 
         document.addEventListener('DOMContentLoaded', initOrangTua);
@@ -1739,6 +2103,12 @@
             color: #333;
             margin: 0 0 5px 0;
         }
+        .class-info p {
+            font-size: 0.85rem;
+            color: #666;
+            margin: 0;
+        }
+
 
         .class-wali, .class-count {
             font-size: 0.8rem;
@@ -2005,6 +2375,112 @@
         .child-card:active {
             transform: scale(0.98);
         }
+
+        /* New child card wrapper */
+        .child-card-wrapper {
+            margin-bottom: 20px;
+        }
+
+        .child-info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 15px;
+        }
+
+        .child-stat-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+        }
+
+        .child-stat-row:first-child {
+            padding-top: 0;
+        }
+
+        .child-stat-row:last-child {
+            padding-bottom: 0;
+            border-top: 1px solid #f0f0f0;
+            margin-top: 10px;
+        }
+
+        .child-stat-item {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .child-stat-divider {
+            width: 1px;
+            height: 40px;
+            background: #e0e0e0;
+        }
+
+        .child-avatar-sm {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .child-stat-label {
+            font-size: 0.75rem;
+            color: #999;
+            margin-bottom: 4px;
+        }
+
+        .child-stat-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .child-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .child-menu-item {
+            background: white;
+            border-radius: 15px;
+            padding: 20px 15px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .child-menu-item:active {
+            transform: scale(0.98);
+        }
+
+        .child-menu-item i {
+            font-size: 1.8rem;
+            color: #667eea;
+        }
+
+        .child-menu-item span {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #333;
+            text-align: center;
+        }
+
+        /* Original child card styles for modal */
 
         .child-avatar {
             width: 60px;
@@ -2350,6 +2826,723 @@
             font-style: italic;
             padding: 40px 20px;
         }
+
+        /* Enhanced Assignment Styles */
+        .assignments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .assignment-item {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .assignment-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .assignment-icon.success {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: #155724;
+        }
+
+        .assignment-icon.pending {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            color: #856404;
+        }
+
+        .assignment-info {
+            flex: 1;
+        }
+
+        .assignment-info h4 {
+            margin: 0 0 8px 0;
+            font-size: 0.95rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .assignment-subject,
+        .assignment-date {
+            margin: 4px 0;
+            font-size: 0.8rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .assignment-subject i,
+        .assignment-date i {
+            color: #667eea;
+            font-size: 0.75rem;
+        }
+
+        .assignment-score {
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .assignment-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .assignment-badge.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .assignment-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Enhanced Notes Styles */
+        .notes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .note-item {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .note-icon-wrapper {
+            flex-shrink: 0;
+        }
+
+        .note-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .note-icon.akademik {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .note-icon.prestasi {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .note-icon.kesehatan {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .note-icon.perilaku {
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+        }
+
+        .note-content-wrapper {
+            flex: 1;
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .note-header h4 {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .note-category {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .note-category.akademik {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .note-category.prestasi {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+
+        .note-category.kesehatan {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .note-category.perilaku {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .note-text {
+            margin: 0 0 12px 0;
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .note-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .teacher-badge,
+        .note-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        .teacher-badge i,
+        .note-date i {
+            color: #667eea;
+        }
+
+        /* Enhanced Feedback Styles */
+        .feedback-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .feedback-item {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .feedback-teacher-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .feedback-teacher-info {
+            flex: 1;
+        }
+
+        .feedback-teacher-info h4 {
+            margin: 0 0 3px 0;
+            font-size: 0.9rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .feedback-subject {
+            margin: 0;
+            font-size: 0.75rem;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .feedback-category {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .feedback-category.akademik {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .feedback-category.prestasi {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+
+        .feedback-category.kesehatan {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .feedback-category.perilaku {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .feedback-content-section {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .priority-high {
+            color: #dc3545;
+            margin-right: 8px;
+            font-size: 0.9rem;
+        }
+
+        .feedback-content {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .feedback-footer {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        .feedback-footer i {
+            color: #667eea;
+        }
+
+        /* Enhanced Attendance Styles */
+        .attendance-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .attendance-overview {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .attendance-percentage {
+            display: flex;
+            justify-content: center;
+        }
+
+        .percentage-circle {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+        .circular-chart {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.2);
+            stroke-width: 3.8;
+        }
+
+        .circle {
+            fill: none;
+            stroke: white;
+            stroke-width: 3.8;
+            stroke-linecap: round;
+            animation: progress 1s ease-out forwards;
+        }
+
+        @keyframes progress {
+            0% {
+                stroke-dasharray: 0 100;
+            }
+        }
+
+        .percentage-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .percentage-value {
+            display: block;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .percentage-label {
+            display: block;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 4px;
+        }
+
+        .attendance-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .attendance-stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .attendance-stat-card .stat-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .attendance-stat-card.present .stat-icon {
+            background: #d4edda;
+            color: #28a745;
+        }
+
+        .attendance-stat-card.sick .stat-icon {
+            background: #fff3cd;
+            color: #ffc107;
+        }
+
+        .attendance-stat-card.permission .stat-icon {
+            background: #d1ecf1;
+            color: #17a2b8;
+        }
+
+        .attendance-stat-card.absent .stat-icon {
+            background: #f8d7da;
+            color: #dc3545;
+        }
+
+        .attendance-stat-card .stat-info {
+            flex: 1;
+        }
+
+        .attendance-stat-card .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .attendance-stat-card .stat-label {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .attendance-list-title {
+            margin: 0 0 15px 0;
+            font-size: 1rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .attendance-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .attendance-item {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .attendance-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .attendance-icon.hadir {
+            background: #d4edda;
+            color: #28a745;
+        }
+
+        .attendance-icon.sakit {
+            background: #fff3cd;
+            color: #ffc107;
+        }
+
+        .attendance-icon.izin {
+            background: #d1ecf1;
+            color: #17a2b8;
+        }
+
+        .attendance-icon.alpha {
+            background: #f8d7da;
+            color: #dc3545;
+        }
+
+        .attendance-details {
+            flex: 1;
+        }
+
+        .attendance-date {
+            font-size: 0.9rem;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .attendance-time {
+            font-size: 0.75rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 3px;
+        }
+
+        .attendance-time i {
+            color: #667eea;
+        }
+
+        .attendance-note {
+            margin: 6px 0 0 0;
+            font-size: 0.75rem;
+            color: #666;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .attendance-note i {
+            color: #667eea;
+        }
+
+        .attendance-status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .attendance-status-badge.hadir {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .attendance-status-badge.sakit {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .attendance-status-badge.izin {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .attendance-status-badge.alpha {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Enhanced Class Info Styles */
+        .class-info-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .class-info-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .class-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .class-main-info h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .class-main-info p {
+            margin: 0;
+            font-size: 0.85rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-title {
+            margin: 0 0 12px 0;
+            font-size: 0.95rem;
+            color: #333;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            color: #667eea;
+        }
+
+        .teacher-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .teacher-avatar-lg {
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .teacher-details h4 {
+            margin: 0 0 4px 0;
+            font-size: 0.95rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .teacher-role {
+            margin: 0;
+            font-size: 0.75rem;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #0c5460;
+            flex-shrink: 0;
+        }
+
+        .info-details {
+            flex: 1;
+        }
+
+        .info-label {
+            display: block;
+            font-size: 0.7rem;
+            color: #999;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+        }
+
 
         /* Desktop styles */
         @media (min-width: 769px) {

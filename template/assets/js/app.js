@@ -12,10 +12,10 @@ const dummyData = {
             photo: "student1.jpg",
             grades: {
                 "2024/2025": {
-                    "Matematika": { uts: 85, uas: 88 },
-                    "Bahasa Indonesia": { uts: 90, uas: 85 },
-                    "IPA": { uts: 82, uas: 86 },
-                    "IPS": { uts: 88, uas: 90 }
+                    "Matematika": { uts: 85, uas: 88, tugas1: 80, tugas2: 90 },
+                    "Bahasa Indonesia": { uts: 90, uas: 85, tugas1: 88, tugas2: 92 },
+                    "IPA": { uts: 82, uas: 86, tugas1: 80, tugas2: 84 },
+                    "IPS": { uts: 88, uas: 90, tugas1: 85, tugas2: 87 }
                 }
             }
         },
@@ -34,6 +34,24 @@ const dummyData = {
                     "Bahasa Indonesia": { uts: 88, uas: 92 },
                     "IPA": { uts: 90, uas: 88 },
                     "IPS": { uts: 85, uas: 87 }
+                }
+            }
+        },
+        {
+            id: 4,
+            name: "Rina Maharani",
+            class: "X-B",
+            nisn: "1234567893",
+            parent: "Budi Santoso",
+            parentPhone: "08123456789",
+            balance: 60000,
+            photo: "student4.jpg",
+            grades: {
+                "2024/2025": {
+                    "Matematika": { uts: 88, uas: 85 },
+                    "Bahasa Indonesia": { uts: 90, uas: 88 },
+                    "IPA": { uts: 86, uas: 89 },
+                    "IPS": { uts: 87, uas: 90 }
                 }
             }
         },
@@ -93,6 +111,39 @@ const dummyData = {
             total: 12000,
             paymentMethod: "card",
             date: "2024-09-21"
+        },
+        {
+            id: "TRX003",
+            studentId: 4,
+            items: [
+                { id: 1, name: "Nasi Gudeg", price: 15000, quantity: 1 },
+                { id: 3, name: "Es Teh", price: 3000, quantity: 1 },
+                { id: 4, name: "Kerupuk", price: 2000, quantity: 1 }
+            ],
+            total: 20000,
+            paymentMethod: "card",
+            date: "2024-09-22"
+        },
+        {
+            id: "TRX004",
+            studentId: 4,
+            items: [
+                { id: 5, name: "Roti Bakar", price: 8000, quantity: 1 },
+                { id: 3, name: "Es Teh", price: 3000, quantity: 1 }
+            ],
+            total: 11000,
+            paymentMethod: "card",
+            date: "2024-09-23"
+        },
+        {
+            id: "TRX005",
+            studentId: 4,
+            items: [
+                { id: 2, name: "Mie Ayam", price: 12000, quantity: 1 }
+            ],
+            total: 12000,
+            paymentMethod: "card",
+            date: "2024-09-25"
         }
     ],
     
@@ -126,6 +177,37 @@ const dummyData = {
             score: 95,
             date: "2024-09-15",
             teacherId: 1
+        },
+        {
+            id: 4,
+            studentId: 4,
+            subject: "Matematika",
+            title: "Tugas Aljabar",
+            score: 88,
+            date: "2024-09-15",
+            teacherId: 1
+        },
+        {
+            id: 5,
+            studentId: 4,
+            subject: "Bahasa Indonesia",
+            title: "Essay Puisi",
+            score: 92,
+            date: "2024-09-18",
+            teacherId: 2,
+            status: "Selesai",
+            dueDate: "2024-09-25"
+        },
+        {
+            id: 6,
+            studentId: 4,
+            subject: "IPA",
+            title: "Praktikum Fisika",
+            score: 87,
+            date: "2024-09-20",
+            teacherId: 3,
+            status: "Selesai",
+            dueDate: "2024-09-27"
         }
     ],
     
@@ -189,6 +271,36 @@ const dummyData = {
             priority: "high",
             isRead: true,
             readAt: "2024-09-28"
+        },
+        {
+            id: 6,
+            studentId: 4,
+            teacherId: 1,
+            teacherName: "Ibu Sari",
+            subject: "Matematika",
+            title: "Prestasi Baik",
+            content: "Rina menunjukkan kemajuan yang sangat baik dalam memahami konsep matematika. Selalu aktif bertanya dan membantu teman yang kesulitan.",
+            date: "2024-10-05",
+            category: "akademik",
+            type: "positif",
+            priority: "medium",
+            isRead: false,
+            readAt: null
+        },
+        {
+            id: 7,
+            studentId: 4,
+            teacherId: 2,
+            teacherName: "Pak Budi",
+            subject: "Bahasa Indonesia",
+            title: "Karya Kreatif",
+            content: "Essay dan puisi yang dibuat sangat menarik. Memiliki kemampuan menulis yang baik dengan imajinasi yang tinggi.",
+            date: "2024-10-10",
+            category: "prestasi",
+            type: "positif",
+            priority: "high",
+            isRead: false,
+            readAt: null
         }
     ],
     
@@ -216,6 +328,46 @@ const dummyData = {
             status: "sakit",
             time: "",
             note: "Demam tinggi"
+        },
+        {
+            id: 4,
+            studentId: 4,
+            date: "2024-10-01",
+            status: "hadir",
+            time: "07:20",
+            note: ""
+        },
+        {
+            id: 5,
+            studentId: 4,
+            date: "2024-10-02",
+            status: "hadir",
+            time: "07:25",
+            note: ""
+        },
+        {
+            id: 6,
+            studentId: 4,
+            date: "2024-10-03",
+            status: "hadir",
+            time: "07:22",
+            note: ""
+        },
+        {
+            id: 7,
+            studentId: 4,
+            date: "2024-10-04",
+            status: "izin",
+            time: "",
+            note: "Acara keluarga"
+        },
+        {
+            id: 8,
+            studentId: 4,
+            date: "2024-10-07",
+            status: "hadir",
+            time: "07:18",
+            note: ""
         }
     ],
     
