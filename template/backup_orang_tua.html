@@ -428,43 +428,42 @@
         <div class="modal-overlay" onclick="closeFeedbackModal()"></div>
         <div class="modal-container">
             <div class="modal-header">
-                <h3>Kirim Feedback</h3>
+                <h3>Feedback ke Guru</h3>
                 <button class="modal-close" onclick="closeFeedbackModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-content">
                 <form id="feedbackForm" onsubmit="saveFeedback(event)">
-                    <!-- Show child name if called from child menu, or select if from bottom nav -->
                     <div class="form-group">
-                        <label class="form-label">Untuk Anak:</label>
-                        <div id="feedbackChildName" style="font-weight: 600; color: #667eea; padding: 10px; background: #f8f9fa; border-radius: 8px;">
-                            <!-- Will be filled by JS -->
-                        </div>
-                        <select class="form-control" id="feedbackChildSelect" style="display: none;">
+                        <label class="form-label">Nama Anak:</label>
+                        <select class="form-control" id="feedbackChildSelect" required>
                             <option value="">Pilih anak...</option>
                         </select>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Jenis Feedback:</label>
-                        <select class="form-control" id="feedbackType" onchange="toggleTeacherSelect()" required>
-                            <option value="">Pilih jenis...</option>
-                            <option value="guru">Feedback untuk Guru</option>
-                            <option value="sekolah">Feedback untuk Sekolah</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group" id="teacherSelectDiv" style="display: none;">
-                        <label class="form-label">Nama Guru:</label>
-                        <select class="form-control" id="feedbackTeacherSelect">
+                        <label class="form-label">Guru:</label>
+                        <select class="form-control" id="feedbackTeacherSelect" required>
                             <option value="">Pilih guru...</option>
                         </select>
                     </div>
                     
                     <div class="form-group">
+                        <label class="form-label">Jenis Feedback:</label>
+                        <select class="form-control" id="feedbackType" required>
+                            <option value="">Pilih jenis...</option>
+                            <option value="pengajaran">Pengajaran</option>
+                            <option value="komunikasi">Komunikasi</option>
+                            <option value="penilaian">Penilaian</option>
+                            <option value="kedisiplinan">Kedisiplinan</option>
+                            <option value="lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
                         <label class="form-label">Deskripsi Feedback:</label>
-                        <textarea class="form-control" id="feedbackDescription" rows="5" placeholder="Tuliskan feedback Anda..." required></textarea>
+                        <textarea class="form-control" id="feedbackDescription" rows="5" placeholder="Tuliskan feedback Anda untuk guru..." required></textarea>
                     </div>
                     
                     <div class="form-actions">
@@ -1154,26 +1153,44 @@
             const child = currentChildren.find(c => c.id === childId);
             if (!child) return;
             
-            // Show feedback form modal for this child
-            selectedChildForFeedback = child;
-            document.getElementById('feedbackChildName').textContent = child.name;
+            // Get all notes as feedback
+            const notes = MonitoringApp.dummyData.studentNotes.filter(n => n.studentId === childId);
+            let html = '<div class="feedback-list">';
+            if (notes.length === 0) {
+                html += '<p class="no-data">Belum ada feedback</p>';
+            } else {
+                notes.forEach(note => {
+                    const teacherName = MonitoringApp.dummyData.teachers.find(t => t.id === note.teacherId)?.name || 'Guru Tidak Diketahui';
+                    note.teacherName = teacherName;
+                    const categoryClass = note.category || 'netral';
+                    const priorityIcon = note.priority === 'high' ? '<i class="fas fa-exclamation-circle priority-high"></i>' : '';
+                    html += `
+                        <div class="feedback-item">
+                            <div class="feedback-teacher-section">
+                                <div class="teacher-avatar-sm">${MonitoringApp.getInitials(note.teacherName)}</div>
+                                <div class="feedback-teacher-info">
+                                    <h4>${note.teacherName}</h4>
+                                    <p class="feedback-subject">${note.subject}</p>
+                                </div>
+                                <span class="feedback-category ${categoryClass}">${note.category}</span>
+                            </div>
+                            <div class="feedback-content-section">
+                                ${priorityIcon}
+                                <p class="feedback-content">${note.content}</p>
+                            </div>
+                            <div class="feedback-footer">
+                                <i class="fas fa-calendar-day"></i>
+                                <span>${MonitoringApp.formatDate(note.date)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
             
-            // Hide child select since we already know the child
-            document.getElementById('feedbackChildSelect').style.display = 'none';
-            document.getElementById('feedbackChildSelect').value = child.id;
-            
-            // Populate teacher options
-            const teacherSelect = document.getElementById('feedbackTeacherSelect');
-            teacherSelect.innerHTML = '<option value="">Pilih Guru...</option>';
-            MonitoringApp.dummyData.teachers.forEach(teacher => {
-                teacherSelect.innerHTML += `<option value="${teacher.id}">${teacher.name} - ${teacher.subject}</option>`;
-            });
-            
-            // Reset form
-            document.getElementById('feedbackForm').reset();
-            toggleTeacherSelect();
-            
-            document.getElementById('feedbackReportModal').style.display = 'flex';
+            document.getElementById('childModalTitle').textContent = `Feedback - ${child.name}`;
+            document.getElementById('childModalContent').innerHTML = html;
+            document.getElementById('childModal').style.display = 'flex';
         }
 
         function showChildAttendance(childId) {
@@ -1702,14 +1719,8 @@
         }
         // Feedback functions
         function showFeedbackModal() {
-            // This is called from bottom nav feedback button
-            // Show form without specific child
-            selectedChildForFeedback = null;
-            document.getElementById('feedbackChildName').style.display = 'none';
-            
-            // Show and populate child select
+            // Populate child select
             const childSelect = document.getElementById('feedbackChildSelect');
-            childSelect.style.display = 'block';
             childSelect.innerHTML = '<option value="">Pilih anak...</option>';
             currentChildren.forEach(child => {
                 childSelect.innerHTML += `<option value="${child.id}">${child.name}</option>`;
@@ -1722,21 +1733,7 @@
                 teacherSelect.innerHTML += `<option value="${teacher.id}">${teacher.name} - ${teacher.subject}</option>`;
             });
             
-            // Reset form and show
-            document.getElementById('feedbackForm').reset();
-            toggleTeacherSelect();
             document.getElementById('feedbackReportModal').style.display = 'flex';
-        }
-        
-        function toggleTeacherSelect() {
-            const feedbackType = document.getElementById('feedbackType').value;
-            const teacherSelectDiv = document.getElementById('teacherSelectDiv');
-            
-            if (feedbackType === 'guru') {
-                teacherSelectDiv.style.display = 'block';
-            } else {
-                teacherSelectDiv.style.display = 'none';
-            }
         }
 
         function closeFeedbackModal() {
@@ -1752,46 +1749,16 @@
             const feedbackType = document.getElementById('feedbackType').value;
             const description = document.getElementById('feedbackDescription').value;
             
-            if (!description) {
-                alert('Harap isi deskripsi feedback');
-                return;
+            const child = currentChildren.find(c => c.id == childId);
+            const teacher = MonitoringApp.dummyData.teachers.find(t => t.id == teacherId);
+            
+            if (child && teacher) {
+                alert(`Feedback berhasil dikirim!\n\nUntuk: ${teacher.name}\nDari: Orang tua ${child.name}\nJenis: ${feedbackType}\n\nFeedback Anda akan segera ditinjau oleh guru yang bersangkutan.`);
+                closeFeedbackModal();
+            } else {
+                alert('Gagal mengirim feedback. Silakan coba lagi.');
             }
-            
-            if (feedbackType === 'guru' && !teacherId) {
-                alert('Harap pilih guru');
-                return;
-            }
-            
-            const child = childId ? currentChildren.find(c => c.id == childId) : null;
-            const teacher = teacherId ? MonitoringApp.dummyData.teachers.find(t => t.id == teacherId) : null;
-            
-            // Save feedback
-            const feedbackData = {
-                id: Date.now(),
-                childId: child ? child.id : null,
-                childName: child ? child.name : 'Semua Anak',
-                type: feedbackType,
-                teacherId: teacher ? teacher.id : null,
-                teacherName: teacher ? teacher.name : 'Sekolah',
-                feedback: description,
-                date: new Date().toISOString().split('T')[0],
-                status: 'pending'
-            };
-            
-            // Add to dummy data
-            if (!MonitoringApp.dummyData.parentFeedbacks) {
-                MonitoringApp.dummyData.parentFeedbacks = [];
-            }
-            MonitoringApp.dummyData.parentFeedbacks.push(feedbackData);
-            
-            const target = feedbackType === 'guru' ? teacher.name : 'Sekolah';
-            alert(`Feedback berhasil dikirim ke ${target}!\n\nFeedback Anda akan segera ditinjau.`);
-            
-            closeFeedbackModal();
-            loadFeedbackList();
         }
-        
-        let selectedChildForFeedback = null;
 
         // Transaction History functions
         function showChildTransactions(childId) {

@@ -1391,6 +1391,84 @@ function getRecentAchievements(limit = 10) {
         .slice(0, limit);
 }
 
+// Load Achievements News for Parent Dashboard
+function loadAchievementsNews() {
+    const container = document.getElementById('achievementsNewsList');
+    if (!container) return;
+    
+    const achievements = getRecentAchievements(5);
+    
+    if (achievements.length === 0) {
+        container.innerHTML = `
+            <div class="no-achievements">
+                <i class="fas fa-trophy"></i>
+                <p>Belum ada prestasi siswa yang tercatat</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = achievements.map(achievement => {
+        const badgeClass = getBadgeClass(achievement.category, achievement.medal);
+        const icon = getCategoryIcon(achievement.category);
+        
+        return `
+            <div class="achievement-news-card">
+                <div class="achievement-news-header">
+                    <div class="achievement-news-icon">
+                        <i class="${icon}"></i>
+                    </div>
+                    <div class="achievement-news-info">
+                        <div class="achievement-news-title">${achievement.achievement}</div>
+                        <div class="achievement-news-student">${achievement.studentName} - ${achievement.class}</div>
+                    </div>
+                </div>
+                <div class="achievement-news-description">
+                    ${achievement.description}
+                </div>
+                <div class="achievement-news-footer">
+                    <span class="achievement-news-date">
+                        <i class="far fa-calendar"></i>
+                        ${formatDate(achievement.date)}
+                    </span>
+                    <span class="achievement-news-badge ${badgeClass}">
+                        <i class="fas fa-medal"></i>
+                        ${achievement.level}
+                    </span>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function getBadgeClass(category, medal) {
+    if (medal === 'gold') return 'badge-gold';
+    if (medal === 'silver') return 'badge-silver';
+    if (medal === 'bronze') return 'badge-bronze';
+    
+    const categoryMap = {
+        'Akademik': 'badge-academic',
+        'Olahraga': 'badge-sport',
+        'Seni': 'badge-art',
+        'Bahasa': 'badge-academic',
+        'Teknologi': 'badge-academic'
+    };
+    
+    return categoryMap[category] || 'badge-academic';
+}
+
+function getCategoryIcon(category) {
+    const iconMap = {
+        'Akademik': 'fas fa-graduation-cap',
+        'Olahraga': 'fas fa-running',
+        'Seni': 'fas fa-palette',
+        'Bahasa': 'fas fa-language',
+        'Teknologi': 'fas fa-laptop-code'
+    };
+    
+    return iconMap[category] || 'fas fa-trophy';
+}
+
 // Initialize page
 function initPage() {
     // Add event listeners for common elements
@@ -1460,7 +1538,8 @@ window.MonitoringApp = {
     getAchievementsByClass,
     getAchievementsByCategory,
     getAchievementsByLevel,
-    getRecentAchievements
+    getRecentAchievements,
+    loadAchievementsNews
 };
 
 // Initialize when DOM is loaded
